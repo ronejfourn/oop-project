@@ -14,8 +14,8 @@ AnimatedSprite::AnimatedSprite(SDL_Texture *texture) : AnimatedSprite() {
     _texture = texture;
 }
 
-AnimatedSprite::AnimatedSprite(Graphics &g, std::string file_path) : AnimatedSprite() {
-    _texture = g.LoadImage(file_path.c_str());
+AnimatedSprite::AnimatedSprite(Graphics *g, std::string file_path) : AnimatedSprite() {
+    _texture = g->LoadImage(file_path.c_str());
 }
 
 uint32_t AnimatedSprite::GetFPS() {
@@ -35,22 +35,22 @@ void AnimatedSprite::AddAnimation(std::string state, int x, int y, int w, int h,
     _frametime = 1000.0 / (fps ? fps : 12);
 }
 
-void AnimatedSprite::Draw(Graphics &g, std::string state, SDL_FRect &dst, bool flip, bool offs, float angle, SDL_FPoint *center) {
+void AnimatedSprite::Draw(Graphics *g, std::string state, SDL_FRect &dst, bool flip, bool offs, float angle, SDL_FPoint *center) {
     SDL_Rect src = _src[state];
     src.x += _currentframe * src.w;
-    g.DrawTexture(_texture, src, dst, offs, center, angle, flip);
-    _elapsedtime += g.GetDeltaTime();
+    g->DrawTexture(_texture, src, dst, offs, center, angle, flip);
+    _elapsedtime += g->GetDeltaTime();
     if (_elapsedtime >= _frametime) {
         _elapsedtime = 0;
         _currentframe = (_currentframe + 1) % _framecount[state];
     }
 }
 
-void AnimatedSprite::Draw(Graphics &g, std::string state, SDL_Rect &dst, bool flip, float angle, SDL_Point *center) {
+void AnimatedSprite::Draw(Graphics *g, std::string state, SDL_Rect &dst, bool flip, float angle, SDL_Point *center) {
     SDL_Rect src = _src[state];
     src.x += _currentframe * src.w;
-    g.DrawTexture(_texture, src, dst, center, angle, flip);
-    _elapsedtime += g.GetDeltaTime();
+    g->DrawTexture(_texture, src, dst, center, angle, flip);
+    _elapsedtime += g->GetDeltaTime();
     if (_elapsedtime >= _frametime) {
         _elapsedtime = 0;
         _currentframe = (_currentframe + 1) % _framecount[state];

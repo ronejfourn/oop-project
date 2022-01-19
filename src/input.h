@@ -4,6 +4,7 @@
 #include <functional>
 
 class Input {
+    static Input *_instance;
 private:
     std::map<SDL_Scancode, bool> _keyDown;
     std::map<SDL_Scancode, std::function<void()>> _keyBind;
@@ -11,8 +12,9 @@ private:
     bool _btnDown[3];
     bool _holdBtn[3];
     std::function<void()> _btnBind[3];
-public:
     Input();
+public:
+    static Input *GetInstance();
 
     void BindActionToKey(SDL_Scancode key, const std::function<void()>& action, bool hold);
     void BindActionToBtn(int btn, const std::function<void()>& action, bool hold);

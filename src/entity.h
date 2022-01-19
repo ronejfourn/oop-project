@@ -30,5 +30,5 @@ public:
     void Die();
     void FaceTowards(float x, float y);
 
-    void Draw(Graphics &g);
+    void Draw(Graphics *g);
 };

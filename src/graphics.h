@@ -11,15 +11,17 @@ struct SDL_FRect;
 struct SDL_Texture;
 
 class Graphics {
+    static Graphics *_instance;
 private:
     SDL_Window *_window;
     SDL_Renderer *_renderer;
     uint32_t _wwidth, _wheight, _dbegin;
     float _offx, _offy;
     float _dt, _ft;
-public:
+
     Graphics();
-    ~Graphics();
+public:
+    static Graphics *GetInstance();
 
     SDL_Renderer *GetRenderer();
 

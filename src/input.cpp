@@ -1,4 +1,12 @@
 #include "input.h"
+
+Input *Input::_instance = nullptr;
+
+Input *Input::GetInstance() {
+    if (!_instance) _instance = new Input;
+    return _instance;
+}
+
 Input::Input() {
     _btnDown[0] = false;
     _btnDown[1] = false;

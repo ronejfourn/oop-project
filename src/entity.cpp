@@ -46,7 +46,7 @@ void Entity::FaceTowards(float x, float y) {
     _flip = (x < _body.x + _body.w / 2.0);
 }
 
-void Entity::Draw(Graphics &g) {
+void Entity::Draw(Graphics *g) {
     _sprite.Draw(g, _state, _body, _flip, true);
 }
 

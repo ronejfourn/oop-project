@@ -1,10 +1,22 @@
 #include "graphics.h"
 #include "entity.h"
 #include "logger.h"
-#include <SDL2/SDL.h>
+#include "SDL2/SDL_render.h"
+#include "SDL2/SDL_hints.h"
+#include "SDL2/SDL_timer.h"
+#include "SDL2/SDL_mouse.h"
 #define STB_IMAGE_IMPLEMENTATION
 #define STBI_ONLY_PNG
-#include <stb/stb_image.h>
+#include "stb/stb_image.h"
+
+//TODO: move mouse elsewhere
+
+Graphics *Graphics::_instance = nullptr;
+
+Graphics *Graphics::GetInstance() {
+    if (!_instance) _instance = new Graphics;
+    return _instance;
+}
 
 Graphics::Graphics() {
     _wwidth = 1280;
@@ -38,11 +50,6 @@ Graphics::Graphics() {
 
     SDL_RenderSetLogicalSize(_renderer, _wwidth, _wheight);
     SDL_SetRenderDrawBlendMode(_renderer, SDL_BLENDMODE_BLEND);
-}
-
-Graphics::~Graphics() {
-    SDL_DestroyWindow(_window);
-    SDL_DestroyRenderer(_renderer);
 }
 
 SDL_Renderer *Graphics::GetRenderer() {
