@@ -1,8 +1,6 @@
 #include "tilemap.h"
 #include "player.h"
 #include <SDL2/SDL.h>
-#include <iostream>
-#include <cstdlib>
 
 SDL_Texture *singleTexture;
 
@@ -16,7 +14,7 @@ int main() {
     context.SetTitle("Game", "../res/icon.bmp");
 
     singleTexture = context.LoadImage("../res/0x72_DungeonTilesetII_v1.4/0x72_DungeonTilesetII_v1.4.png");
-    Player player;
+    Player player(1280 / 2, 720 / 2);
     Tilemap floor(singleTexture);
     floor.AddTile(16, 64);
     floor.AddTile(32, 64);
