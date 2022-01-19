@@ -1,7 +1,8 @@
-#include "SDL2/SDL_timer.h"
 #include "tilemap.h"
 #include "player.h"
+#include "input.h"
 #include <SDL2/SDL.h>
+#include <functional>
 #include <iostream>
 
 SDL_Texture *singleTexture;
@@ -70,32 +71,24 @@ int main(int argc, char *argv[]) {
     delete []indices;
 
     SDL_Point ini = player.GetCenter();
-    int a;
+
+    Input inp;
+    inp.BindActionToKey(SDL_SCANCODE_W, std::bind(&Player::MoveUp   , &player), true);
+    inp.BindActionToKey(SDL_SCANCODE_A, std::bind(&Player::MoveLeft , &player), true);
+    inp.BindActionToKey(SDL_SCANCODE_S, std::bind(&Player::MoveDown , &player), true);
+    inp.BindActionToKey(SDL_SCANCODE_D, std::bind(&Player::MoveRight, &player), true);
 
     while(1) {
-        a = SDL_GetTicks();
         while(SDL_PollEvent(&e)) {
             if (e.type == SDL_QUIT) {
                 return 0;
             } else if (e.type == SDL_KEYDOWN) {
-                key_held[e.key.keysym.scancode] = true;
+                inp.KeyDown(e.key.keysym.scancode);
             } else if (e.type == SDL_KEYUP) {
-                key_held[e.key.keysym.scancode] = false;
+                inp.KeyUp(e.key.keysym.scancode);
             }
         }
-
-        if (key_held[SDL_SCANCODE_W]) {
-            player.MoveUp();
-        }
-        if (key_held[SDL_SCANCODE_A]) {
-            player.MoveLeft();
-        }
-        if (key_held[SDL_SCANCODE_S]) {
-            player.MoveDown();
-        }
-        if (key_held[SDL_SCANCODE_D]) {
-            player.MoveRight();
-        }
+        inp.Handle();
 
         mouse = context.GetCursorPosition(true);
         player.FaceTowards(mouse.x, mouse.y);
