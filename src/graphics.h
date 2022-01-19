@@ -5,7 +5,9 @@ struct SDL_Window;
 struct SDL_Renderer;
 struct SDL_Color;
 struct SDL_Point;
+struct SDL_FPoint;
 struct SDL_Rect;
+struct SDL_FRect;
 struct SDL_Texture;
 
 class Graphics {
@@ -40,7 +42,8 @@ public:
     void FillRect(SDL_Rect &rect, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255, bool offs = true);
     void DrawPoint(int x, int y, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255, bool offs = true);
     void DrawLine(int x1, int y1, int x2, int y2, uint8_t r, uint8_t g, uint8_t b, uint8_t a = 255, uint32_t t = 1, bool offs = true);
-    void DrawTexture(SDL_Texture *texture, SDL_Rect &src, SDL_Rect &dst, bool offs = true, SDL_Point *center = nullptr, float angle = 0, bool flip = false);
+    void DrawTexture(SDL_Texture *texture, SDL_Rect &src, SDL_Rect &dst , bool offs = true, SDL_Point *center = nullptr , float angle = 0, bool flip = false);
+    void DrawTexture(SDL_Texture *texture, SDL_Rect &src, SDL_FRect &dst, bool offs = true, SDL_FPoint *center = nullptr, float angle = 0, bool flip = false);
 
     SDL_Texture *LoadImage(const char *image_path);
     SDL_Texture *CreateTexture(int width, int height);

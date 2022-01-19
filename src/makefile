@@ -1,5 +1,5 @@
-game.exe: ./build/main.o ./build/animated_sprite.o ./build/entity.o ./build/graphics.o ./build/player.o ./build/sprite.o ./build/tilemap.o
-	g++ ./build/*.o -lSDL2 -lSDL2main -o game.exe
+./bin/game.exe: ./build/main.o ./build/animated_sprite.o ./build/entity.o ./build/graphics.o ./build/player.o ./build/sprite.o ./build/tilemap.o ./build/input.o
+	g++ ./build/*.o -lSDL2 -lSDL2main -o ./build/game.exe
 
 ./build/main.o: main.cpp
 	g++ -I../extern -c main.cpp -o ./build/main.o
@@ -21,3 +21,6 @@ game.exe: ./build/main.o ./build/animated_sprite.o ./build/entity.o ./build/grap
 
 ./build/tilemap.o: tilemap.cpp tilemap.h graphics.cpp graphics.h
 	g++ -I../extern -c tilemap.cpp -o ./build/tilemap.o
+
+./build/input.o: input.cpp input.h
+	g++ -I../extern -c input.cpp -o ./build/input.o

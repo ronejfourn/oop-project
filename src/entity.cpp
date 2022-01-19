@@ -58,10 +58,10 @@ void Entity::Move(float deltatime) {
     _acny = 0;
 
     float friction = 0.018 * deltatime;
-    int sx = _velx < 0 ? -1 : _velx > 0 ? 1 : 0;
-    int sy = _vely < 0 ? -1 : _vely > 0 ? 1 : 0;
-    _velx -= (friction > sx * _velx ? _velx : sx * friction);
-    _vely -= (friction > sy * _vely ? _vely : sy * friction);
+    int sx = _velx < 0 ? -1 : 1;
+    int sy = _vely < 0 ? -1 : 1;
+    _velx -= friction > sx * _velx ? _velx : sx * friction;
+    _vely -= friction > sy * _vely ? _vely : sy * friction;
 
     if (!_velx && !_vely) {
         _state = "idle";
@@ -71,12 +71,12 @@ void Entity::Move(float deltatime) {
 
     if (_limit_speed) {
         if (!_vely && _velx) {
-            _velx = _velx > 5 ? 5 : _velx < -5 ? -5 : _velx;
+            _velx = _velx > 3 ? 3 : _velx < -3 ? -3 : _velx;
         } else if (!_velx && _vely) {
-            _vely = _vely > 5 ? 5 : _vely < -5 ? -5 : _vely;
+            _vely = _vely > 3 ? 3 : _vely < -3 ? -3 : _vely;
         } else if (_velx && _vely) {
-            _velx = _velx > 3.5 ? 3.5 : _velx < -3.5 ? -3.5 : _velx;
-            _vely = _vely > 3.5 ? 3.5 : _vely < -3.5 ? -3.5 : _vely;
+            _velx = _velx > 2.12 ? 2.12 : _velx < -2.12 ? -2.12 : _velx;
+            _vely = _vely > 2.12 ? 2.12 : _vely < -2.12 ? -2.12 : _vely;
         }
     } else {
         _limit_speed = true;
@@ -86,7 +86,7 @@ void Entity::Move(float deltatime) {
     _body.y += _vely;
 }
 
-SDL_Point Entity::GetCenter() {
+SDL_FPoint Entity::GetCenter() {
     return {
         _body.x + _body.w / 2,
         _body.y + _body.h / 2

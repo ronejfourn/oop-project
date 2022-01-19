@@ -35,23 +35,24 @@ int main(int argc, char *argv[]) {
 
     int tsize = 16;
     SDL_Rect tile = {
-        0,
-        0,
+        0, 0,
         tsize,
         tsize
     };
     SDL_Rect maprect = {
-        0,
-        0,
+        0, 0,
         tsize * 70,
         tsize * 32
     };
     SDL_Rect dmaprect = {
-        0,
-        0,
+        0, 0,
         static_cast<int>(tsize * 2.5 * 70),
         static_cast<int>(tsize * 2.5 * 32)
     };
+
+    dmaprect.x -= dmaprect.w / 2 - 1280 / 2;
+    dmaprect.y -= dmaprect.h / 2 - 720 / 2 ;
+
     uint32_t *indices = new uint32_t [maprect.w / tsize * maprect.h / tsize];
     SDL_Texture *map = context.CreateTexture(maprect.w, maprect.h);
     for (int x = 0; x < maprect.w / tsize; x ++) {
@@ -70,7 +71,7 @@ int main(int argc, char *argv[]) {
     context.BindTexture(NULL);
     delete []indices;
 
-    SDL_Point ini = player.GetCenter();
+    SDL_FPoint ini = player.GetCenter();
 
     Input inp;
     inp.BindActionToKey(SDL_SCANCODE_W, std::bind(&Player::MoveUp   , &player), true);
@@ -93,7 +94,7 @@ int main(int argc, char *argv[]) {
         mouse = context.GetCursorPosition(true);
         player.FaceTowards(mouse.x, mouse.y);
         player.Update(context.GetDeltaTime());
-        SDL_Point pcur = player.GetCenter();
+        SDL_FPoint pcur = player.GetCenter();
         context.SetOffset(pcur.x - ini.x, pcur.y - ini.y);
 
         context.Clear();

@@ -3,6 +3,6 @@
 class Player : public Entity {
 public:
     Player();
-    Player(int center_x, int center_y);
+    Player(float center_x, float center_y);
     void Update(float deltatime) override;
 };

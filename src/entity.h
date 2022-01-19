@@ -4,7 +4,7 @@ class Entity {
 protected:
     std::string _state;
     bool        _flip;
-    SDL_Rect    _body;
+    SDL_FRect    _body;
     AnimatedSprite _sprite;
 
     bool _alive, _limit_speed;
@@ -18,7 +18,7 @@ public:
 
     void AddForce(float acx, float acy, float deltatime);
 
-    SDL_Point GetCenter();
+    SDL_FPoint GetCenter();
 
     void MoveUp   ();
     void MoveLeft ();
