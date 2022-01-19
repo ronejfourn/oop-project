@@ -35,12 +35,12 @@ void AnimatedSprite::AddAnimation(std::string state, int x, int y, int w, int h,
     _frametime = 1000.0 / (fps ? fps : 12);
 }
 
-void AnimatedSprite::Draw(Graphics &g, std::string state, SDL_Rect *dst, Facing face, float angle, SDL_Point *center) {
+void AnimatedSprite::Draw(Graphics &g, std::string state, SDL_Rect &dst, bool flip, bool offs, float angle, SDL_Point *center) {
     SDL_Rect src = _src[state];
     src.x += _currentframe * src.w;
-    g.DrawTexture(_texture, &src, dst,
-            center, angle,
-            face == Facing::LEFT);
+    g.DrawTexture(_texture, src, dst,
+            offs, center, angle,
+            flip);
     _elapsedtime += g.GetDeltaTime();
     if (_elapsedtime >= _frametime) {
         _elapsedtime = 0;

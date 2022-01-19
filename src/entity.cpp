@@ -42,11 +42,11 @@ void Entity::Die() {
 }
 
 void Entity::FaceTowards(float x, float y) {
-    _face = (x >= _center.x) ? Facing::RIGHT : Facing::LEFT;
+    _flip = (x < _center.x);
 }
 
 void Entity::Draw(Graphics &g) {
-    _sprite.Draw(g, _state, &_body, _face);
+    _sprite.Draw(g, _state, _body, _flip, true);
 }
 
 void Entity::Move(float deltatime) {

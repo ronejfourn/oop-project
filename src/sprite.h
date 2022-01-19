@@ -4,8 +4,6 @@
 #include <string>
 #include <SDL2/SDL_rect.h>
 
-enum Facing {LEFT, RIGHT};
-
 class Sprite {
 protected:
     SDL_Texture *_texture;
@@ -21,5 +19,5 @@ public:
 
     void AddState(std::string state, int x, int y, int w, int h);
 
-    virtual void Draw(Graphics &g, std::string state, SDL_Rect *dst, Facing face, float angle = 0, SDL_Point *center = NULL);
+    virtual void Draw(Graphics &g, std::string state, SDL_Rect &dst, bool flip, bool offs, float angle = 0, SDL_Point *center = NULL);
 };

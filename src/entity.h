@@ -3,7 +3,7 @@
 class Entity {
 protected:
     std::string _state;
-    Facing      _face;
+    bool        _flip;
     SDL_Rect    _body;
     SDL_Point   _center;
     AnimatedSprite _sprite;

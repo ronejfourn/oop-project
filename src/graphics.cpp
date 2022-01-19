@@ -11,6 +11,9 @@ Graphics::Graphics() {
 
     _dt = 1000.0 / 60;
 
+    _offx = 0;
+    _offy = 0;
+
     _window = SDL_CreateWindow(
             "Unnamed Window",
             SDL_WINDOWPOS_UNDEFINED,

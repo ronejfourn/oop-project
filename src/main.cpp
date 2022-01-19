@@ -76,7 +76,7 @@ int main() {
             tile.x = 48 * x;
             for (int y = 0; y < 720 / 48; y ++) {
                 tile.y = 48 * y;
-                floor.Draw(context, indices[x * 720 / 48 + y], &tile);
+                floor.Draw(context, indices[x * 720 / 48 + y], tile);
             }
         }
         player.FaceTowards(mouse.x, mouse.y);

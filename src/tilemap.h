@@ -17,5 +17,5 @@ public:
     void SetTexture(Graphics &g, const char *file_path);
 
     void AddTile(int x, int y, int w = 16, int h = 16);
-    void Draw(Graphics &g, uint32_t index, SDL_Rect *dst);
+    void Draw(Graphics &g, uint32_t index, SDL_Rect &dst);
 };

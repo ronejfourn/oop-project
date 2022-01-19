@@ -4,7 +4,7 @@ extern SDL_Texture *singleTexture;
 
 Player::Player() : Entity() {
     _state  = "idle";
-    _face   = Facing::RIGHT;
+    _flip   = false;
     _body   = {0, 0, 48, 84};
     _center = {
         _body.x + _body.w / 2,
