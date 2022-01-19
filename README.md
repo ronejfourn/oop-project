@@ -10,7 +10,7 @@
 - [ ] Weapons and Attack
 - [ ] Map Generation
 
-## MaybeDO:
+## MaybeDO
 - [ ] ECS
 - [ ] Loot
 - [ ] Interactibles
