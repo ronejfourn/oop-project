@@ -25,10 +25,12 @@ public:
     void Update();
 
     SDL_Point GetCurrentResolution();
-    SDL_Point GetCursorPosition();
+    SDL_Point GetCursorPosition(bool offseted = false);
 
     void SetTitle(const char *title, const char *icon_file = nullptr);
     void SetTargetFPS(uint32_t fps);
+    void SetOffset(SDL_Point &offset);
+    void SetOffset(int ox, int oy);
 
     float GetDeltaTime();
 
@@ -41,4 +43,6 @@ public:
     void DrawTexture(SDL_Texture *texture, SDL_Rect &src, SDL_Rect &dst, bool offs = true, SDL_Point *center = nullptr, float angle = 0, bool flip = false);
 
     SDL_Texture *LoadImage(const char *image_path);
+    SDL_Texture *CreateTexture(int width, int height);
+    void BindTexture(SDL_Texture *texture);
 };

@@ -18,6 +18,8 @@ public:
 
     void AddForce(float acx, float acy, float deltatime);
 
+    SDL_Point GetCenter();
+
     void MoveUp   ();
     void MoveLeft ();
     void MoveDown ();

@@ -84,3 +84,10 @@ void Entity::Move(float deltatime) {
     _body.x += _velx;
     _body.y += _vely;
 }
+
+SDL_Point Entity::GetCenter() {
+    return {
+        _body.x + _body.w / 2,
+        _body.y + _body.h / 2
+    };
+}

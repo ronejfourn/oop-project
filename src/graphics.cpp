@@ -1,4 +1,5 @@
 #include "graphics.h"
+#include "entity.h"
 #include "logger.h"
 #include <SDL2/SDL.h>
 #define STB_IMAGE_IMPLEMENTATION
@@ -166,13 +167,13 @@ SDL_Point Graphics::GetCurrentResolution() {
     return ret;
 }
 
-SDL_Point Graphics::GetCursorPosition() {
+SDL_Point Graphics::GetCursorPosition(bool offseted) {
     SDL_Point res = GetCurrentResolution();
     int mouse_x, mouse_y;
     SDL_GetMouseState(&mouse_x, &mouse_y);
     SDL_Point ret = {
-        static_cast<int>(mouse_x * float(_wwidth ) / res.x),
-        static_cast<int>(mouse_y * float(_wheight) / res.y)};
+        static_cast<int>(mouse_x * float(_wwidth ) / res.x) + _offx * offseted,
+        static_cast<int>(mouse_y * float(_wheight) / res.y) + _offy * offseted};
     return ret;
 }
 
@@ -218,4 +219,24 @@ SDL_Texture *Graphics::LoadImage(const char *image_path) {
     SDL_FreeSurface(surf);
 
     return ret;
+}
+
+SDL_Texture *Graphics::CreateTexture(int width, int height) {
+    SDL_Texture *ret = SDL_CreateTexture(_renderer, SDL_PIXELFORMAT_ABGR8888, SDL_TEXTUREACCESS_TARGET, width, height);
+    SDL_SetTextureBlendMode(ret, SDL_BLENDMODE_BLEND);
+    return ret;
+}
+
+void Graphics::BindTexture(SDL_Texture *texture) {
+    SDL_SetRenderTarget(_renderer, texture);
+}
+
+void Graphics::SetOffset(SDL_Point &offset) {
+    _offx = offset.x;
+    _offy = offset.y;
+}
+
+void Graphics::SetOffset(int ox, int oy) {
+    _offx = ox;
+    _offy = oy;
 }

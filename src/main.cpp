@@ -12,7 +12,7 @@ int main() {
     SDL_Init(SDL_INIT_EVERYTHING);
     Graphics context;
 
-    context.SetTargetFPS(30);
+    context.SetTargetFPS(60);
     context.SetTitle("Game", "../res/icon.bmp");
 
     singleTexture = context.LoadImage("../res/0x72_DungeonTilesetII_v1.4/0x72_DungeonTilesetII_v1.4.png");
@@ -27,23 +27,42 @@ int main() {
     floor.AddTile(16, 96);
     floor.AddTile(32, 96);
     SDL_Point mouse;
-    SDL_Rect tile = {
+    SDL_Rect maprect = {
         .x = 0,
         .y = 0,
-        .w = 48,
-        .h = 48
+        .w = 1280,
+        .h = 720
     };
 
     SDL_Event e;
 
     std::map<SDL_Scancode, bool> key_held;
 
-    uint32_t indices [1280 / 48 * 720 / 48];
-    for (int x = 0; x < 1280 / 48; x ++) {
-        for (int y = 0; y < 720 / 48; y ++) {
-            indices[x * 720 / 48 + y] = rand() & 7;
+    int tsize = 48;
+    SDL_Rect tile = {
+        .x = 0,
+        .y = 0,
+        .w = tsize,
+        .h = tsize
+    };
+    SDL_Texture *map = context.CreateTexture(1280, 720);
+    uint32_t indices [1280 / tsize * 720 / tsize];
+    for (int x = 0; x < 1280 / tsize; x ++) {
+        for (int y = 0; y < 720 / tsize; y ++) {
+            indices[x * 720 / tsize + y] = rand() & 7;
         }
     }
+    context.BindTexture(map);
+    for (int x = 0; x < 1280 / tsize; x ++) {
+        tile.x = tsize * x;
+        for (int y = 0; y < 720 / tsize; y ++) {
+            tile.y = tsize * y;
+            floor.Draw(context, indices[x * 720 / tsize + y], tile);
+        }
+    }
+    context.BindTexture(NULL);
+
+    SDL_Point ini = player.GetCenter();
 
     while(1) {
         while(SDL_PollEvent(&e)) {
@@ -69,18 +88,14 @@ int main() {
             player.MoveRight();
         }
 
-        mouse = context.GetCursorPosition();
-
-        context.Clear();
-        for (int x = 0; x < 1280 / 48; x ++) {
-            tile.x = 48 * x;
-            for (int y = 0; y < 720 / 48; y ++) {
-                tile.y = 48 * y;
-                floor.Draw(context, indices[x * 720 / 48 + y], tile);
-            }
-        }
+        mouse = context.GetCursorPosition(true);
         player.FaceTowards(mouse.x, mouse.y);
         player.Update(context.GetDeltaTime());
+        SDL_Point pcur = player.GetCenter();
+        context.SetOffset(pcur.x - ini.x, pcur.y - ini.y);
+
+        context.Clear();
+        context.DrawTexture(map, maprect, maprect);
         player.Draw(context);
         context.Update();
     }
