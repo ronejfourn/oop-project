@@ -1,2 +1,7 @@
 *.o
 *.exe
+extern/
+.vs/
+bin/
+x64/
+*.data

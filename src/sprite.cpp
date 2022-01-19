@@ -1,6 +1,8 @@
 #include "sprite.h"
 
-Sprite::Sprite() {}
+Sprite::Sprite() {
+    _texture = nullptr;
+}
 
 Sprite::~Sprite() {}
 

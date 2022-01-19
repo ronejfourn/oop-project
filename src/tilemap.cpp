@@ -1,7 +1,9 @@
 #include "tilemap.h"
 #include "logger.h"
 
-Tilemap::Tilemap() {}
+Tilemap::Tilemap() {
+    _texture = nullptr;
+}
 
 Tilemap::~Tilemap() {}
 

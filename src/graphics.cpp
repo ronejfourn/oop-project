@@ -7,28 +7,31 @@
 #include <stb/stb_image.h>
 
 Graphics::Graphics() {
-    _wwidth  = 1280;
-    _wheight = 720 ;
+    _wwidth = 1280;
+    _wheight = 720;
 
     _dt = 1000.0 / 60;
+    _ft = 1000.0 / 60;
+    _dbegin = 0;
 
     _offx = 0;
     _offy = 0;
 
+	SDL_SetHint(SDL_HINT_RENDER_DRIVER, "opengl");
     _window = SDL_CreateWindow(
-            "Unnamed Window",
-            SDL_WINDOWPOS_UNDEFINED,
-            SDL_WINDOWPOS_UNDEFINED,
-            _wwidth, _wheight,
-            SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
+        "Unnamed Window",
+        SDL_WINDOWPOS_UNDEFINED,
+        SDL_WINDOWPOS_UNDEFINED,
+        _wwidth, _wheight,
+        SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
 
     if (_window == NULL)
         Logger::LogError("Failed to create SDL Window");
 
     _renderer = SDL_CreateRenderer(
-            _window,
-            -1,
-            SDL_RENDERER_ACCELERATED);
+        _window,
+        -1,
+        SDL_RENDERER_ACCELERATED);
 
     if (_renderer == NULL)
         Logger::LogError("Failed to create SDL Renderer");
@@ -53,10 +56,11 @@ void Graphics::Clear() {
 
 void Graphics::Update() {
     SDL_RenderPresent(_renderer);
-    (SDL_GetTicks() - _dbegin) < _dt ?
-        SDL_Delay(_dt - (SDL_GetTicks() - _dbegin)) :
-        SDL_Delay(_dt);
-    _dbegin = SDL_GetTicks();
+    int cd = SDL_GetTicks();
+    if ((cd - _dbegin) < _ft)
+        SDL_Delay(_ft - (cd - _dbegin));
+    _dt = cd - _dbegin;
+    _dbegin = cd;
 }
 
 void Graphics::SetTitle(const char *title, const char *icon_file) {
@@ -64,6 +68,7 @@ void Graphics::SetTitle(const char *title, const char *icon_file) {
 
     if (icon_file != nullptr) {
         SDL_Surface *icon = SDL_LoadBMP(icon_file);
+        if (!icon) Logger::LogWarning("Icon not Found");
         SDL_SetWindowIcon(_window, icon);
     }
 }
@@ -73,15 +78,15 @@ void Graphics::SetTargetFPS(uint32_t fps) {
         Logger::LogWarning("FPS cannot be zero");
         fps = 60;
     }
-    _dt = 1000.0 / fps;
+    _ft = 1000.0 / fps;
 }
 
 void Graphics::DrawRect(int tl_x, int tl_y, int width, int height, uint8_t r, uint8_t g, uint8_t b, uint8_t a, bool offs) {
     SDL_Rect tmp = {
-        .x = tl_x - _offx * offs,
-        .y = tl_y - _offy * offs,
-        .w = width,
-        .h = height
+        tl_x - _offx * offs,
+        tl_y - _offy * offs,
+        width,
+        height
     };
     SDL_SetRenderDrawColor(_renderer, r, g, b, a);
     SDL_RenderDrawRect(_renderer, &tmp);
@@ -101,10 +106,10 @@ void Graphics::DrawRect(SDL_Rect &rect, uint8_t r, uint8_t g, uint8_t b, uint8_t
 
 void Graphics::FillRect(int tl_x, int tl_y, int width, int height, uint8_t r, uint8_t g, uint8_t b, uint8_t a, bool offs) {
     SDL_Rect tmp = {
-        .x = tl_x - _offx * offs,
-        .y = tl_y - _offy * offs,
-        .w = width,
-        .h = height
+        tl_x - _offx * offs,
+        tl_y - _offy * offs,
+        width,
+        height
     };
     SDL_SetRenderDrawColor(_renderer, r, g, b, a);
     SDL_RenderFillRect(_renderer, &tmp);

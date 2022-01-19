@@ -1,2 +1,2 @@
 CompileFlags:
-    Add: [-I../extern/]
+    Add: [-I../extern/, -I../extern/SDL2-2.0.20/]

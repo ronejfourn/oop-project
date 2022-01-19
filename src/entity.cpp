@@ -6,6 +6,7 @@ Entity::Entity() {
     _acnx = 0;
     _acny = 0;
     _alive = true;
+    _flip  = false;
 }
 
 void Entity::MoveUp() {

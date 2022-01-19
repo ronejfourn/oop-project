@@ -10,11 +10,11 @@ AnimatedSprite::~AnimatedSprite() {
 
 }
 
-AnimatedSprite::AnimatedSprite(SDL_Texture *texture) {
+AnimatedSprite::AnimatedSprite(SDL_Texture *texture) : AnimatedSprite() {
     _texture = texture;
 }
 
-AnimatedSprite::AnimatedSprite(Graphics &g, std::string file_path) {
+AnimatedSprite::AnimatedSprite(Graphics &g, std::string file_path) : AnimatedSprite() {
     _texture = g.LoadImage(file_path.c_str());
 }
 

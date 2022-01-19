@@ -14,7 +14,7 @@ private:
     SDL_Renderer *_renderer;
     uint32_t _wwidth, _wheight, _dbegin;
     int _offx, _offy;
-    float _dt;
+    float _dt, _ft;
 public:
     Graphics();
     ~Graphics();

@@ -1,19 +1,21 @@
+#include "SDL2/SDL_timer.h"
 #include "tilemap.h"
 #include "player.h"
 #include <SDL2/SDL.h>
+#include <iostream>
 
 SDL_Texture *singleTexture;
 
-int main() {
+int main(int argc, char *argv[]) {
     srand(0);
     srand(rand());
     SDL_Init(SDL_INIT_EVERYTHING);
     Graphics context;
 
     context.SetTargetFPS(60);
-    context.SetTitle("Game", "../res/icon.bmp");
+    context.SetTitle("Game", "../../res/icon.bmp");
 
-    singleTexture = context.LoadImage("../res/0x72_DungeonTilesetII_v1.4/0x72_DungeonTilesetII_v1.4.png");
+    singleTexture = context.LoadImage("../../res/0x72_DungeonTilesetII_v1.4/0x72_DungeonTilesetII_v1.4.png");
     Player player(1280 / 2, 720 / 2);
     Tilemap floor(singleTexture);
     floor.AddTile(16, 64);
@@ -25,44 +27,53 @@ int main() {
     floor.AddTile(16, 96);
     floor.AddTile(32, 96);
     SDL_Point mouse;
-    SDL_Rect maprect = {
-        .x = 0,
-        .y = 0,
-        .w = 1280,
-        .h = 720
-    };
 
     SDL_Event e;
 
     std::map<SDL_Scancode, bool> key_held;
 
-    int tsize = 48;
+    int tsize = 16;
     SDL_Rect tile = {
-        .x = 0,
-        .y = 0,
-        .w = tsize,
-        .h = tsize
+        0,
+        0,
+        tsize,
+        tsize
     };
-    SDL_Texture *map = context.CreateTexture(1280, 720);
-    uint32_t indices [1280 / tsize * 720 / tsize];
-    for (int x = 0; x < 1280 / tsize; x ++) {
-        for (int y = 0; y < 720 / tsize; y ++) {
-            indices[x * 720 / tsize + y] = rand() & 7;
+    SDL_Rect maprect = {
+        0,
+        0,
+        tsize * 70,
+        tsize * 32
+    };
+    SDL_Rect dmaprect = {
+        0,
+        0,
+        static_cast<int>(tsize * 2.5 * 70),
+        static_cast<int>(tsize * 2.5 * 32)
+    };
+    uint32_t *indices = new uint32_t [maprect.w / tsize * maprect.h / tsize];
+    SDL_Texture *map = context.CreateTexture(maprect.w, maprect.h);
+    for (int x = 0; x < maprect.w / tsize; x ++) {
+        for (int y = 0; y < maprect.h / tsize; y ++) {
+            indices[x * maprect.h / tsize + y] = rand() & 7;
         }
     }
     context.BindTexture(map);
-    for (int x = 0; x < 1280 / tsize; x ++) {
+    for (int x = 0; x < maprect.w / tsize; x ++) {
         tile.x = tsize * x;
-        for (int y = 0; y < 720 / tsize; y ++) {
+        for (int y = 0; y < maprect.h / tsize; y ++) {
             tile.y = tsize * y;
-            floor.Draw(context, indices[x * 720 / tsize + y], tile);
+            floor.Draw(context, indices[x * maprect.h / tsize + y], tile);
         }
     }
     context.BindTexture(NULL);
+    delete []indices;
 
     SDL_Point ini = player.GetCenter();
+    int a;
 
     while(1) {
+        a = SDL_GetTicks();
         while(SDL_PollEvent(&e)) {
             if (e.type == SDL_QUIT) {
                 return 0;
@@ -93,8 +104,9 @@ int main() {
         context.SetOffset(pcur.x - ini.x, pcur.y - ini.y);
 
         context.Clear();
-        context.DrawTexture(map, maprect, maprect);
+        context.DrawTexture(map, maprect, dmaprect);
         player.Draw(context);
+
         context.Update();
     }
 
