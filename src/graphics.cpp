@@ -1,8 +1,6 @@
 #include "graphics.h"
 #include "logger.h"
-#include <SDL2/SDL_render.h>
-#include <SDL2/SDL_timer.h>
-#include <SDL2/SDL_mouse.h>
+#include <SDL2/SDL.h>
 #define STB_IMAGE_IMPLEMENTATION
 #define STBI_ONLY_PNG
 #include <stb/stb_image.h>
@@ -74,10 +72,10 @@ void Graphics::SetTargetFPS(uint32_t fps) {
     _dt = 1000.0 / fps;
 }
 
-void Graphics::DrawRect(int tl_x, int tl_y, int width, int height, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
+void Graphics::DrawRect(int tl_x, int tl_y, int width, int height, uint8_t r, uint8_t g, uint8_t b, uint8_t a, bool offs) {
     SDL_Rect tmp = {
-        .x = tl_x,
-        .y = tl_y,
+        .x = tl_x - _offx * offs,
+        .y = tl_y - _offy * offs,
         .w = width,
         .h = height
     };
@@ -85,10 +83,22 @@ void Graphics::DrawRect(int tl_x, int tl_y, int width, int height, uint8_t r, ui
     SDL_RenderDrawRect(_renderer, &tmp);
 }
 
-void Graphics::FillRect(int tl_x, int tl_y, int width, int height, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
+void Graphics::DrawRect(SDL_Rect &rect, uint8_t r, uint8_t g, uint8_t b, uint8_t a, bool offs) {
+    SDL_SetRenderDrawColor(_renderer, r, g, b, a);
+    if (!offs) {
+        SDL_RenderDrawRect(_renderer, &rect);
+    } else {
+        SDL_Rect temp = rect;
+        temp.x -= _offx;
+        temp.y -= _offy;
+        SDL_RenderDrawRect(_renderer, &temp);
+    }
+}
+
+void Graphics::FillRect(int tl_x, int tl_y, int width, int height, uint8_t r, uint8_t g, uint8_t b, uint8_t a, bool offs) {
     SDL_Rect tmp = {
-        .x = tl_x,
-        .y = tl_y,
+        .x = tl_x - _offx * offs,
+        .y = tl_y - _offy * offs,
         .w = width,
         .h = height
     };
@@ -96,12 +106,28 @@ void Graphics::FillRect(int tl_x, int tl_y, int width, int height, uint8_t r, ui
     SDL_RenderFillRect(_renderer, &tmp);
 }
 
-void Graphics::DrawPoint(int x, int y, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
+void Graphics::FillRect(SDL_Rect &rect, uint8_t r, uint8_t g, uint8_t b, uint8_t a, bool offs) {
     SDL_SetRenderDrawColor(_renderer, r, g, b, a);
-    SDL_RenderDrawPoint(_renderer, x, y);
+    if (!offs) {
+        SDL_RenderFillRect(_renderer, &rect);
+    } else {
+        SDL_Rect temp = rect;
+        temp.x -= _offx;
+        temp.y -= _offy;
+        SDL_RenderFillRect(_renderer, &temp);
+    }
 }
 
-void Graphics::DrawLine(int x1, int y1, int x2, int y2, uint8_t r, uint8_t g, uint8_t b, uint8_t a, uint32_t t) {
+void Graphics::DrawPoint(int x, int y, uint8_t r, uint8_t g, uint8_t b, uint8_t a, bool offs) {
+    SDL_SetRenderDrawColor(_renderer, r, g, b, a);
+    SDL_RenderDrawPoint(_renderer, x - _offx * offs, y - _offy * offs);
+}
+
+void Graphics::DrawLine(int x1, int y1, int x2, int y2, uint8_t r, uint8_t g, uint8_t b, uint8_t a, uint32_t t, bool offs) {
+    x1 -= _offx * offs;
+    x2 -= _offx * offs;
+    y1 -= _offy * offs;
+    y2 -= _offy * offs;
     SDL_SetRenderDrawColor(_renderer, r, g, b, a);
     if (t <= 1) {
         SDL_RenderDrawLine(_renderer, x1, y1, x2, y2);
@@ -116,6 +142,35 @@ void Graphics::DrawLine(int x1, int y1, int x2, int y2, uint8_t r, uint8_t g, ui
             SDL_RenderDrawLineF(_renderer, x1 - adx, y1 - ady, x2 - adx, y2 - ady);
         }
     }
+}
+
+void Graphics::DrawTexture(SDL_Texture *texture, SDL_Rect &src, SDL_Rect &dst, bool offs, SDL_Point *center, float angle, bool flip) {
+    if (!offs) {
+        SDL_RenderCopyEx(_renderer, texture, &src, &dst, angle, center, flip ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE);
+    } else {
+        SDL_Rect tmp = dst;
+        tmp.x -= _offx;
+        tmp.y -= _offy;
+        SDL_RenderCopyEx(_renderer, texture, &src, &tmp, angle, center, flip ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE);
+    }
+}
+
+float Graphics::GetDeltaTime() {return _dt;}
+
+SDL_Point Graphics::GetCurrentResolution() {
+    SDL_Point ret;
+    SDL_GetWindowSize(_window, &ret.x, &ret.y);
+    return ret;
+}
+
+SDL_Point Graphics::GetCursorPosition() {
+    SDL_Point res = GetCurrentResolution();
+    int mouse_x, mouse_y;
+    SDL_GetMouseState(&mouse_x, &mouse_y);
+    SDL_Point ret = {
+        static_cast<int>(mouse_x * float(_wwidth ) / res.x),
+        static_cast<int>(mouse_y * float(_wheight) / res.y)};
+    return ret;
 }
 
 /*
@@ -159,27 +214,5 @@ SDL_Texture *Graphics::LoadImage(const char *image_path) {
     stbi_image_free(data);
     SDL_FreeSurface(surf);
 
-    return ret;
-}
-
-void Graphics::DrawTexture(SDL_Texture *texture, SDL_Rect *src, SDL_Rect* dst, SDL_Point *center, float angle, bool flip) {
-    SDL_RenderCopyEx(_renderer, texture, src, dst, angle, center, flip ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE);
-}
-
-float Graphics::GetDeltaTime() {return _dt;}
-
-SDL_Point Graphics::GetCurrentResolution() {
-    SDL_Point ret;
-    SDL_GetWindowSize(_window, &ret.x, &ret.y);
-    return ret;
-}
-
-SDL_Point Graphics::GetCursorPosition() {
-    SDL_Point res = GetCurrentResolution();
-    int mouse_x, mouse_y;
-    SDL_GetMouseState(&mouse_x, &mouse_y);
-    SDL_Point ret = {
-        static_cast<int>(mouse_x * float(_wwidth ) / res.x),
-        static_cast<int>(mouse_y * float(_wheight) / res.y)};
     return ret;
 }
