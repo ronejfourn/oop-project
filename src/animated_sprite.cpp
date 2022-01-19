@@ -45,3 +45,14 @@ void AnimatedSprite::Draw(Graphics &g, std::string state, SDL_FRect &dst, bool f
         _currentframe = (_currentframe + 1) % _framecount[state];
     }
 }
+
+void AnimatedSprite::Draw(Graphics &g, std::string state, SDL_Rect &dst, bool flip, float angle, SDL_Point *center) {
+    SDL_Rect src = _src[state];
+    src.x += _currentframe * src.w;
+    g.DrawTexture(_texture, src, dst, center, angle, flip);
+    _elapsedtime += g.GetDeltaTime();
+    if (_elapsedtime >= _frametime) {
+        _elapsedtime = 0;
+        _currentframe = (_currentframe + 1) % _framecount[state];
+    }
+}

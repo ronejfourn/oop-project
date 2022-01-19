@@ -71,12 +71,12 @@ void Entity::Move(float deltatime) {
 
     if (_limit_speed) {
         if (!_vely && _velx) {
-            _velx = _velx > 3 ? 3 : _velx < -3 ? -3 : _velx;
+            _velx = _velx > 5 ? 5 : _velx < -5 ? -5 : _velx;
         } else if (!_velx && _vely) {
-            _vely = _vely > 3 ? 3 : _vely < -3 ? -3 : _vely;
+            _vely = _vely > 5 ? 5 : _vely < -5 ? -5 : _vely;
         } else if (_velx && _vely) {
-            _velx = _velx > 2.12 ? 2.12 : _velx < -2.12 ? -2.12 : _velx;
-            _vely = _vely > 2.12 ? 2.12 : _vely < -2.12 ? -2.12 : _vely;
+            _velx = _velx > 3.5 ? 3.5 : _velx < -3.5 ? -3.5 : _velx;
+            _vely = _vely > 3.5 ? 3.5 : _vely < -3.5 ? -3.5 : _vely;
         }
     } else {
         _limit_speed = true;

@@ -17,7 +17,7 @@ int main(int argc, char *argv[]) {
     context.SetTitle("Game", "../../res/icon.bmp");
 
     singleTexture = context.LoadImage("../../res/0x72_DungeonTilesetII_v1.4/0x72_DungeonTilesetII_v1.4.png");
-    Player player(1280 / 2, 720 / 2);
+    Player player(1280 / 2.0, 720 / 2.0);
     Tilemap floor(singleTexture);
     floor.AddTile(16, 64);
     floor.AddTile(32, 64);
@@ -27,7 +27,7 @@ int main(int argc, char *argv[]) {
     floor.AddTile(48, 80);
     floor.AddTile(16, 96);
     floor.AddTile(32, 96);
-    SDL_Point mouse;
+    SDL_FPoint mouse;
 
     SDL_Event e;
 
@@ -44,14 +44,14 @@ int main(int argc, char *argv[]) {
         tsize * 70,
         tsize * 32
     };
-    SDL_Rect dmaprect = {
+    SDL_FRect dmaprect = {
         0, 0,
-        static_cast<int>(tsize * 2.5 * 70),
-        static_cast<int>(tsize * 2.5 * 32)
+        float(tsize * 2.5 * 70),
+        float(tsize * 2.5 * 32)
     };
 
-    dmaprect.x -= dmaprect.w / 2 - 1280 / 2;
-    dmaprect.y -= dmaprect.h / 2 - 720 / 2 ;
+    dmaprect.x -= (dmaprect.w - 1280) / 2;
+    dmaprect.y -= (dmaprect.h - 720 ) / 2 ;
 
     uint32_t *indices = new uint32_t [maprect.w / tsize * maprect.h / tsize];
     SDL_Texture *map = context.CreateTexture(maprect.w, maprect.h);
