@@ -56,10 +56,14 @@ void Graphics::Clear() {
 
 void Graphics::Update() {
     SDL_RenderPresent(_renderer);
-    _dt = SDL_GetTicks() - _dbegin;
-    _dt = _dt < _ft ? _dt : _ft;
-    SDL_Delay(_ft - _dt);
-    _dbegin += _dt;
+    int diff = SDL_GetTicks() - _dbegin;
+    if (diff < _ft) {
+        _dt = _ft - diff;
+        SDL_Delay(_ft - diff);
+    } else {
+        _dt = _ft;
+    }
+    _dbegin = SDL_GetTicks();
 }
 
 void Graphics::SetTitle(const char *title, const char *icon_file) {
