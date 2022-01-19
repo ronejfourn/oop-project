@@ -6,10 +6,6 @@ Player::Player() : Entity() {
     _state  = "idle";
     _flip   = false;
     _body   = {0, 0, 48, 84};
-    _center = {
-        _body.x + _body.w / 2,
-        _body.y + _body.h / 2,
-    };
 
     _hp = 100;
 
@@ -20,10 +16,6 @@ Player::Player() : Entity() {
 
 Player::Player(int x, int y) : Player() {
     _body   = {0, 0, 48, 84};
-    _center = {
-        _body.x + _body.w / 2,
-        _body.y + _body.h / 2,
-    };
 }
 
 void Player::Update(float deltatime) {

@@ -42,7 +42,7 @@ void Entity::Die() {
 }
 
 void Entity::FaceTowards(float x, float y) {
-    _flip = (x < _center.x);
+    _flip = (x < _body.x + _body.w / 2.0);
 }
 
 void Entity::Draw(Graphics &g) {
@@ -53,15 +53,14 @@ void Entity::Move(float deltatime) {
     _vely += _acny * deltatime;
     _velx += _acnx * deltatime;
 
+    _acnx = 0;
+    _acny = 0;
+
     float friction = 0.018 * deltatime;
-    if (_velx) {
-        int sign = _velx < 0 ? -1 : 1;
-        _velx -= (friction > sign * _velx ? _velx : sign * friction);
-    }
-    if (_vely) {
-        int sign = _vely < 0 ? -1 : 1;
-        _vely -= (friction > sign * _vely ? _vely : sign * friction);
-    }
+    int sx = _velx < 0 ? -1 : _velx > 0 ? 1 : 0;
+    int sy = _vely < 0 ? -1 : _vely > 0 ? 1 : 0;
+    _velx -= (friction > sx * _velx ? _velx : sx * friction);
+    _vely -= (friction > sy * _vely ? _vely : sy * friction);
 
     if (!_velx && !_vely) {
         _state = "idle";
@@ -70,17 +69,18 @@ void Entity::Move(float deltatime) {
     }
 
     if (_limit_speed) {
-        _velx = _velx > 5 ? 5 : _velx < -5 ? -5 : _velx;
-        _vely = _vely > 5 ? 5 : _vely < -5 ? -5 : _vely;
+        if (!_vely && _velx) {
+            _velx = _velx > 5 ? 5 : _velx < -5 ? -5 : _velx;
+        } else if (!_velx && _vely) {
+            _vely = _vely > 5 ? 5 : _vely < -5 ? -5 : _vely;
+        } else if (_velx && _vely) {
+            _velx = _velx > 3.5 ? 3.5 : _velx < -3.5 ? -3.5 : _velx;
+            _vely = _vely > 3.5 ? 3.5 : _vely < -3.5 ? -3.5 : _vely;
+        }
     } else {
         _limit_speed = true;
     }
 
     _body.x += _velx;
     _body.y += _vely;
-    _center.x += _velx;
-    _center.y += _vely;
-
-    _acnx = 0;
-    _acny = 0;
 }
