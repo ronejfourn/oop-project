@@ -36,13 +36,14 @@ void AnimatedSprite::AddAnimation(std::string state, int x, int y, int w, int h,
 }
 
 void AnimatedSprite::Draw(Graphics *g, std::string state, SDL_FRect &dst, SDL_RendererFlip flip, bool offs, float angle, SDL_FPoint *center) {
+    _currentframe %= _framecount[state];
     SDL_Rect src = _src[state];
     src.x += _currentframe * src.w;
     g->DrawTexture(_texture, src, dst, offs, center, angle, flip);
     _elapsedtime += g->GetDeltaTime();
     if (_elapsedtime >= _frametime) {
         _elapsedtime = 0;
-        _currentframe = (_currentframe + 1) % _framecount[state];
+        _currentframe ++;
     }
 }
 

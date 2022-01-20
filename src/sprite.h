@@ -17,6 +17,8 @@ public:
     void SetTexture(SDL_Texture *texture);
     void SetTexture(Graphics *g, std::string file_path);
 
+    SDL_Texture *GetTexture();
+
     void AddState(std::string state, int x, int y, int w, int h);
 
     virtual void Draw(Graphics *g, std::string state, SDL_FRect &dst, SDL_RendererFlip flip, bool offs, float angle = 0, SDL_FPoint *center = NULL);

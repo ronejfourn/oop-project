@@ -7,6 +7,8 @@ Entity::Entity() {
     _acny = 0;
     _alive = true;
     _flip  = SDL_FLIP_NONE;
+    _recovertime = 100;
+    _htime = 0;
 }
 
 void Entity::MoveUp() {
@@ -33,6 +35,7 @@ void Entity::AddForce(float acx, float acy, float deltatime) {
 
 void Entity::TakeDamage(float damage) {
     _hp -= damage;
+    _state = "hurt";
     if (_hp <= 0) {
         _alive = false;
     }
@@ -62,12 +65,6 @@ void Entity::Move(float deltatime) {
     int sy = _vely < 0 ? -1 : 1;
     _velx -= friction > sx * _velx ? _velx : sx * friction;
     _vely -= friction > sy * _vely ? _vely : sy * friction;
-
-    if (!_velx && !_vely) {
-        _state = "idle";
-    } else {
-        _state = "run";
-    }
 
     if (_limit_speed) {
         if (!_vely && _velx) {

@@ -8,7 +8,7 @@ protected:
     AnimatedSprite _sprite;
 
     bool _alive, _limit_speed;
-    float _hp;
+    float _hp, _recovertime, _htime;
     float _velx, _vely;
     float _acnx, _acny;
 
@@ -27,9 +27,9 @@ public:
     void MoveRight();
     virtual void Update(float deltatime) = 0;
 
-    void TakeDamage(float damage);
-    void Die();
-    void FaceTowards(float x, float y);
+    virtual void TakeDamage(float damage);
+    virtual void Die();
+    virtual void FaceTowards(float x, float y);
 
-    void Draw(Graphics *g);
+    virtual void Draw(Graphics *g);
 };

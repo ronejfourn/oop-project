@@ -22,6 +22,10 @@ void Sprite::SetTexture(Graphics *g, std::string file_path) {
     _texture = g->LoadImage(file_path.c_str());
 }
 
+SDL_Texture *Sprite::GetTexture() {
+    return _texture;
+}
+
 void Sprite::AddState(std::string state, int x, int y, int w, int h) {
     _src[state] = {x, y, w, h};
 }

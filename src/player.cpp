@@ -19,6 +19,7 @@ Player::Player() : Entity() {
     _sprite.SetTexture(singleTexture);
     _sprite.AddAnimation("idle", 128, 106, s_width, s_height, 4);
     _sprite.AddAnimation("run" , 192, 106, s_width, s_height, 4);
+    _sprite.AddAnimation("hurt", 256, 102, s_width, s_height, 1);
 }
 
 Player::Player(float center_x, float center_y) : Player() {
@@ -30,6 +31,42 @@ Player::Player(float center_x, float center_y) : Player() {
     };
 }
 
+void Player::TakeDamage(float damage) {
+    if (_state != "hurt") {
+        _hp -= damage;
+        _state = "hurt";
+        if (_hp <= 0)
+            _alive = false;
+    }
+}
+
 void Player::Update(float deltatime) {
-    Move(deltatime);
+    if (_state != "hurt")
+        Move(deltatime);
+
+    if (_state == "hurt") {
+        _htime += deltatime;
+        if (_htime > _recovertime) {
+            _htime = 0;
+            _state = "idle";
+        }
+    } else if (_velx || _vely) {
+        _state = "run";
+    } else {
+        _state = "idle";
+    }
+}
+
+void Player::Draw(Graphics *g) {
+    if (_state == "hurt") {
+        _body.y -= 4;
+        SDL_SetTextureAlphaMod(_sprite.GetTexture(), 200);
+        SDL_SetTextureColorMod(_sprite.GetTexture(), 200, 0, 0);
+        _sprite.Draw(g, _state, _body, _flip, true);
+        SDL_SetTextureAlphaMod(_sprite.GetTexture(), 255);
+        SDL_SetTextureColorMod(_sprite.GetTexture(), 255, 255, 255);
+        _body.y += 4;
+    } else {
+        _sprite.Draw(g, _state, _body, _flip, true);
+    }
 }
