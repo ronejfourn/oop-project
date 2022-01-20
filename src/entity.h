@@ -2,9 +2,9 @@
 
 class Entity {
 protected:
-    std::string _state;
-    bool        _flip;
-    SDL_FRect    _body;
+    std::string     _state;
+    SDL_RendererFlip _flip;
+    SDL_FRect      _body;
     AnimatedSprite _sprite;
 
     bool _alive, _limit_speed;

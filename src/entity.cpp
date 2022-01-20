@@ -6,7 +6,7 @@ Entity::Entity() {
     _acnx = 0;
     _acny = 0;
     _alive = true;
-    _flip  = false;
+    _flip  = SDL_FLIP_NONE;
 }
 
 void Entity::MoveUp() {
@@ -43,7 +43,7 @@ void Entity::Die() {
 }
 
 void Entity::FaceTowards(float x, float y) {
-    _flip = (x < _body.x + _body.w / 2.0);
+    _flip = (x < _body.x + _body.w / 2.0) ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE;
 }
 
 void Entity::Draw(Graphics *g) {

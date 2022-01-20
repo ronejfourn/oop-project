@@ -173,18 +173,18 @@ void Graphics::DrawLine(float x1, float y1, float x2, float y2, uint8_t r, uint8
     }
 }
 
-void Graphics::DrawTexture(SDL_Texture *texture, SDL_Rect &src, SDL_Rect &dst, SDL_Point *center, float angle, bool flip) {
-    SDL_RenderCopyEx(_renderer, texture, &src, &dst, angle, center, flip ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE);
+void Graphics::DrawTexture(SDL_Texture *texture, SDL_Rect &src, SDL_Rect &dst, SDL_Point *center, float angle, SDL_RendererFlip flip) {
+    SDL_RenderCopyEx(_renderer, texture, &src, &dst, angle, center, flip);
 }
 
-void Graphics::DrawTexture(SDL_Texture *texture, SDL_Rect &src, SDL_FRect &dst, bool offs, SDL_FPoint *center, float angle, bool flip) {
+void Graphics::DrawTexture(SDL_Texture *texture, SDL_Rect &src, SDL_FRect &dst, bool offs, SDL_FPoint *center, float angle, SDL_RendererFlip flip) {
     if (!offs) {
-        SDL_RenderCopyExF(_renderer, texture, &src, &dst, angle, center, flip ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE);
+        SDL_RenderCopyExF(_renderer, texture, &src, &dst, angle, center, flip);
     } else {
         SDL_FRect tmp = dst;
         tmp.x -= _offx;
         tmp.y -= _offy;
-        SDL_RenderCopyExF(_renderer, texture, &src, &tmp, angle, center, flip ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE);
+        SDL_RenderCopyExF(_renderer, texture, &src, &tmp, angle, center, flip);
     }
 }
 
