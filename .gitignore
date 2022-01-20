@@ -5,3 +5,4 @@ extern/
 bin/
 x64/
 *.data
+makefile
