@@ -39,6 +39,9 @@
     <ClInclude Include="src\tilemap.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\ui.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\animated_sprite.cpp">
@@ -60,6 +63,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\tilemap.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ui.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\input.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

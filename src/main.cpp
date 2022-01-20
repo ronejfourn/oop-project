@@ -2,6 +2,7 @@
 #include "player.h"
 #include "input.h"
 #include "weapon.h"
+#include "ui.h"
 #include <SDL2/SDL.h>
 #include <functional>
 #include <iostream>
@@ -13,6 +14,9 @@ int main(int argc, char *argv[]) {
     srand(rand());
     SDL_Init(SDL_INIT_EVERYTHING);
     Graphics *graphicsInstance = Graphics::GetInstance();
+    ui *uiInstance = ui::GetInstance();
+    uiInstance->LoadFont(graphicsInstance);
+    uiInstance->SetState(STATE_ALIVE);
 
     graphicsInstance->SetTargetFPS(60);
     graphicsInstance->SetTitle("Game", "../../res/icon.bmp");
@@ -105,6 +109,7 @@ int main(int argc, char *argv[]) {
         player.Draw(graphicsInstance);
         weap.PointTowards(mouse);
         weap.Draw(graphicsInstance);
+        uiInstance->Draw(graphicsInstance, player);
 
         graphicsInstance->Update();
     }

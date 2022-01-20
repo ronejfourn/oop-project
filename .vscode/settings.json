@@ -1,0 +1,10 @@
+{
+    "C_Cpp.default.includePath": [
+        "C:\\Users\\Ashu\\Desktop\\didactic-octo-barnacle\\extern",
+        "C:\\Users\\Ashu\\Desktop\\didactic-octo-barnacle\\extern\\SDL2-2.0.20\\"
+    ],
+    "files.associations": {
+        "functional": "cpp",
+        "string": "cpp"
+    }
+}

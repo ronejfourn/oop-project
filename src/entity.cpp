@@ -92,3 +92,5 @@ SDL_FPoint Entity::GetCenter() {
         _body.y + _body.h / 2
     };
 }
+
+float Entity::GetHp() {return _hp;}
