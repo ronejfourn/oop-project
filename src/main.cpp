@@ -94,6 +94,10 @@ int main(int argc, char *argv[]) {
                 inputInstance->KeyDown(e.key.keysym.scancode);
             } else if (e.type == SDL_KEYUP) {
                 inputInstance->KeyUp(e.key.keysym.scancode);
+            } else if (e.type == SDL_MOUSEBUTTONDOWN) {
+                inputInstance->BtnDown(e.button.button, e.button.x, e.button.y);
+            } else if (e.type == SDL_MOUSEBUTTONUP) {
+                inputInstance->BtnUp(e.button.button);
             }
         }
         inputInstance->Handle();

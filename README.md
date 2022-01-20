@@ -2,7 +2,7 @@
 
 
 # TODO
-- [ ] Input Handling
+- [x] Input Handling
 - [ ] Collision Detection
 - [ ] UI
 - [ ] Game States (menu, pause etc)
