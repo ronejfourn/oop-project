@@ -55,14 +55,9 @@ void Input::ClearBinds() {
     _btnBind[0] = nullptr;
     _btnBind[1] = nullptr;
     _btnBind[2] = nullptr;
-}
-
-void Input::Flush() {
-    for (auto &i : _keyDown)
-        i.second.v &= isDown;
-    _btnDown[0].v &= isDown;
-    _btnDown[1].v &= isDown;
-    _btnDown[2].v &= isDown;
+    _btnDown[0].v = 0;
+    _btnDown[1].v = 0;
+    _btnDown[2].v = 0;
 }
 
 void Input::KeyUp(SDL_Scancode key) {

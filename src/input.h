@@ -20,7 +20,6 @@ public:
     void BindActionToBtn(int btn, const std::function<void(int, int)>& action, bool hold);
 
     void Handle();
-    void Flush();
     void ClearBinds();
 
     void KeyUp  (SDL_Scancode key);
