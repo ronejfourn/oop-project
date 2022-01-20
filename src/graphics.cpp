@@ -1,7 +1,6 @@
 #include "graphics.h"
 #include "entity.h"
 #include "logger.h"
-#include "SDL2/SDL_render.h"
 #include "SDL2/SDL_hints.h"
 #include "SDL2/SDL_timer.h"
 #include "SDL2/SDL_mouse.h"

@@ -1,5 +1,6 @@
 #pragma once
 #include <cstdint>
+#include "SDL2/SDL_render.h"
 
 struct SDL_Window;
 struct SDL_Renderer;
