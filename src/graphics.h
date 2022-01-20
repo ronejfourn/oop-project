@@ -1,23 +1,15 @@
 #pragma once
-#include <cstdint>
 #include "SDL2/SDL_render.h"
-
-struct SDL_Window;
-struct SDL_Renderer;
-struct SDL_Color;
-struct SDL_Point;
-struct SDL_FPoint;
-struct SDL_Rect;
-struct SDL_FRect;
-struct SDL_Texture;
+#include "utils.h"
 
 class Graphics {
     static Graphics *_instance;
 private:
     SDL_Window *_window;
     SDL_Renderer *_renderer;
-    uint32_t _wwidth, _wheight, _dbegin;
-    float _offx, _offy;
+    Vec2i _wdim;
+    uint32_t _dbegin;
+    Vec2f _off;
     float _dt, _ft;
 
     Graphics();
@@ -29,12 +21,12 @@ public:
     void Clear();
     void Update();
 
-    SDL_Point GetCurrentResolution();
-    SDL_FPoint GetCursorPosition(bool offseted = false);
+    Vec2i GetCurrentResolution();
+    Vec2f GetCursorPosition(bool offseted = false);
 
     void SetTitle(const char *title, const char *icon_file = nullptr);
     void SetTargetFPS(uint32_t fps);
-    void SetOffset(SDL_FPoint &offset);
+    void SetOffset(Vec2f offset);
     void SetOffset(float ox, float oy);
 
     float GetDeltaTime();

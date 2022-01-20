@@ -1,25 +1,26 @@
+#pragma once
 #include "animated_sprite.h"
+#include "utils.h"
 
 class Entity {
 protected:
     std::string     _state;
     SDL_RendererFlip _flip;
-    SDL_FRect      _body;
+    Vec2f _tl, _dim;
     AnimatedSprite _sprite;
 
     bool _alive, _limit_speed;
     float _hp, _recovertime, _htime;
-    float _velx, _vely;
-    float _acnx, _acny;
+    Vec2f _vel, _accn;
 
     void Move(float deltatime);
 public:
     Entity();
 
-    void AddForce(float acx, float acy, float deltatime);
+    void AddForce(Vec2f op, float deltatime);
 
-    SDL_FPoint GetCenter();
-    float GetHp();
+    Vec2f GetCenter();
+    float GetHp() {return _hp;}
 
     void MoveUp   ();
     void MoveLeft ();
@@ -29,7 +30,7 @@ public:
 
     virtual void TakeDamage(float damage);
     virtual void Die();
-    virtual void FaceTowards(float x, float y);
+    virtual void FaceTowards(Vec2f pos);
 
     virtual void Draw(Graphics *g);
 };

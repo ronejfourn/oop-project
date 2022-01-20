@@ -32,7 +32,7 @@ int main(int argc, char *argv[]) {
     floor.AddTile(48, 80);
     floor.AddTile(16, 96);
     floor.AddTile(32, 96);
-    SDL_FPoint mouse;
+    Vec2f mouse;
 
     SDL_Event e;
 
@@ -51,8 +51,8 @@ int main(int argc, char *argv[]) {
     };
     SDL_FRect dmaprect = {
         0, 0,
-        float(tsize * 2.5 * 70),
-        float(tsize * 2.5 * 32)
+        float(tsize * 3 * 70),
+        float(tsize * 3 * 32)
     };
 
     dmaprect.x -= (dmaprect.w - 1280) / 2;
@@ -76,7 +76,8 @@ int main(int argc, char *argv[]) {
     graphicsInstance->BindTexture(NULL);
     delete []indices;
 
-    SDL_FPoint ini = player.GetCenter();
+    Vec2f ini, pcur;
+    ini = player.GetCenter();
 
     Input *inputInstance = Input::GetInstance();
     inputInstance->BindActionToKey(SDL_SCANCODE_W, std::bind(&Player::MoveUp   , &player), true);
@@ -103,10 +104,10 @@ int main(int argc, char *argv[]) {
         inputInstance->Handle();
 
         mouse = graphicsInstance->GetCursorPosition(true);
-        player.FaceTowards(mouse.x, mouse.y);
+        player.FaceTowards(mouse);
         player.Update(graphicsInstance->GetDeltaTime());
-        SDL_FPoint pcur = player.GetCenter();
-        graphicsInstance->SetOffset(pcur.x - ini.x, pcur.y - ini.y);
+        pcur = player.GetCenter();
+        graphicsInstance->SetOffset(pcur - ini);
 
         graphicsInstance->Clear();
         graphicsInstance->DrawTexture(map, maprect, dmaprect);

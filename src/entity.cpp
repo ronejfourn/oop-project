@@ -1,10 +1,6 @@
 #include "entity.h"
 
 Entity::Entity() {
-    _velx = 0;
-    _vely = 0;
-    _acnx = 0;
-    _acny = 0;
     _alive = true;
     _flip  = SDL_FLIP_NONE;
     _recovertime = 100;
@@ -12,25 +8,24 @@ Entity::Entity() {
 }
 
 void Entity::MoveUp() {
-    _acny = -0.03;
+    _accn.y = -0.03;
 }
 
 void Entity::MoveLeft() {
-    _acnx = -0.03;
+    _accn.x = -0.03;
 }
 
 void Entity::MoveDown() {
-    _acny = +0.03;
+    _accn.y = +0.03;
 }
 
 void Entity::MoveRight() {
-    _acnx = +0.03;
+    _accn.x = +0.03;
 }
 
-void Entity::AddForce(float acx, float acy, float deltatime) {
+void Entity::AddForce(Vec2f op, float deltatime) {
     _limit_speed = false;
-    _acnx += acx * deltatime;
-    _acny += acy * deltatime;
+    _accn += op * deltatime;
 }
 
 void Entity::TakeDamage(float damage) {
@@ -45,49 +40,47 @@ void Entity::Die() {
 
 }
 
-void Entity::FaceTowards(float x, float y) {
-    _flip = (x < _body.x + _body.w / 2.0) ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE;
+void Entity::FaceTowards(Vec2f pos) {
+    _flip = (pos.x < _tl.x + _dim.x / 2.0) ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE;
 }
 
 void Entity::Draw(Graphics *g) {
-    _sprite.Draw(g, _state, _body, _flip, true);
+    SDL_FRect tmp = {
+        _tl.x , _tl.y,
+        _dim.x, _dim.y
+    };
+    _sprite.Draw(g, _state, tmp, _flip, true);
 }
 
 void Entity::Move(float deltatime) {
-    _vely += _acny * deltatime;
-    _velx += _acnx * deltatime;
-
-    _acnx = 0;
-    _acny = 0;
+    _vel += _accn * deltatime;
+    _accn.zero();
 
     float friction = 0.018 * deltatime;
-    int sx = _velx < 0 ? -1 : 1;
-    int sy = _vely < 0 ? -1 : 1;
-    _velx -= friction > sx * _velx ? _velx : sx * friction;
-    _vely -= friction > sy * _vely ? _vely : sy * friction;
+    int sx = _vel.x < 0 ? -1 : 1;
+    int sy = _vel.y < 0 ? -1 : 1;
+    _vel.x -= friction > sx * _vel.x ? _vel.x : sx * friction;
+    _vel.y -= friction > sy * _vel.y ? _vel.y : sy * friction;
 
     if (_limit_speed) {
-        if (!_vely && _velx) {
-            _velx = _velx > 5 ? 5 : _velx < -5 ? -5 : _velx;
-        } else if (!_velx && _vely) {
-            _vely = _vely > 5 ? 5 : _vely < -5 ? -5 : _vely;
-        } else if (_velx && _vely) {
-            _velx = _velx > 3.5 ? 3.5 : _velx < -3.5 ? -3.5 : _velx;
-            _vely = _vely > 3.5 ? 3.5 : _vely < -3.5 ? -3.5 : _vely;
+        if (!_vel.y && _vel.x) {
+            _vel.x = ut_clamp(_vel.x, -5, 5);
+        } else if (!_vel.x && _vel.y) {
+            _vel.y = ut_clamp(_vel.y, -5, 5);
+        } else if (_vel.x && _vel.y) {
+            _vel.x = ut_clamp(_vel.x, -3.5, 3.5);
+            _vel.y = ut_clamp(_vel.y, -3.5, 3.5);
         }
     } else {
         _limit_speed = true;
     }
 
-    _body.x += _velx;
-    _body.y += _vely;
+    _tl += _vel;
 }
 
-SDL_FPoint Entity::GetCenter() {
+Vec2f Entity::GetCenter() {
     return {
-        _body.x + _body.w / 2,
-        _body.y + _body.h / 2
+        _tl.x + _dim.x / 2,
+        _tl.y + _dim.y / 2,
     };
 }
-
-float Entity::GetHp() {return _hp;}

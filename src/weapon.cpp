@@ -1,8 +1,5 @@
 #include "entity.h"
 #include "weapon.h"
-#include <cmath>
-#include <iostream>
-constexpr float pi = 3.14159f;
 
 Weapon::Weapon() {
     _radius = 0;
@@ -18,7 +15,8 @@ Weapon::Weapon(SDL_Texture *texture, Entity *anchor, float rad) : Weapon() {
 }
 
 void Weapon::Draw(Graphics *g) {
-    SDL_FPoint a = _anchor->GetCenter();
+    Vec2f a;
+    a = _anchor->GetCenter();
     SDL_FPoint b = { // Placeholder
         15, 31.5
     };
@@ -32,22 +30,9 @@ void Weapon::Draw(Graphics *g) {
     _sprite.Draw(g, "default", dst, _flip, true, -_angle * 180 / pi, &b);
 }
 
-void Weapon::PointTowards(SDL_FPoint target) {
-    SDL_FPoint a = _anchor->GetCenter();
-    float dfx = target.x - a.x;
-    float dfy = a.y - target.y;
-    _angle = dfx ? std::atan(std::abs(dfy / dfx)) : pi / 2;
-    if (dfx >= 0 && dfy >= 0) {
-        _angle += 0;
-        _flip = SDL_FLIP_NONE;
-    } else if (dfx <= 0 && dfy >= 0) {
-        _angle = pi - _angle;
-        _flip = SDL_FLIP_VERTICAL;
-    } else if (dfx <= 0 && dfy <= 0) {
-        _angle = pi + _angle;
-        _flip = SDL_FLIP_VERTICAL;
-    } else if (dfx >= 0 && dfy <= 0) {
-        _angle = 2 * pi - _angle;
-        _flip = SDL_FLIP_NONE;
-    }
+void Weapon::PointTowards(Vec2f target) {
+    Vec2f a;
+    a = _anchor->GetCenter();
+    _angle = tau - a.angleBetn(target);
+    _flip  = (_angle > halfpi && _angle < thalfpi) ? SDL_FLIP_VERTICAL : SDL_FLIP_HORIZONTAL;
 }

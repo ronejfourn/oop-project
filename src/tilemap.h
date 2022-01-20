@@ -2,7 +2,6 @@
 #include "graphics.h"
 #include <vector>
 #include <string>
-#include <SDL2/SDL_rect.h>
 
 class Tilemap {
 protected:

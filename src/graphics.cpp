@@ -18,22 +18,18 @@ Graphics *Graphics::GetInstance() {
 }
 
 Graphics::Graphics() {
-    _wwidth = 1280;
-    _wheight = 720;
+    _wdim = {1280, 720};
 
     _dt = 1000.0 / 60;
     _ft = 1000.0 / 60;
     _dbegin = 0;
-
-    _offx = 0;
-    _offy = 0;
 
 	SDL_SetHint(SDL_HINT_RENDER_DRIVER, "opengl");
     _window = SDL_CreateWindow(
         "Unnamed Window",
         SDL_WINDOWPOS_UNDEFINED,
         SDL_WINDOWPOS_UNDEFINED,
-        _wwidth, _wheight,
+        _wdim.x, _wdim.y,
         SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE);
 
     if (_window == NULL)
@@ -47,7 +43,7 @@ Graphics::Graphics() {
     if (_renderer == NULL)
         Logger::LogError("Failed to create SDL Renderer");
 
-    SDL_RenderSetLogicalSize(_renderer, _wwidth, _wheight);
+    SDL_RenderSetLogicalSize(_renderer, _wdim.x, _wdim.y);
     SDL_SetRenderDrawBlendMode(_renderer, SDL_BLENDMODE_BLEND);
 }
 
@@ -92,8 +88,8 @@ void Graphics::SetTargetFPS(uint32_t fps) {
 
 void Graphics::DrawRect(float tl_x, float tl_y, float width, float height, uint8_t r, uint8_t g, uint8_t b, uint8_t a, bool offs) {
     SDL_FRect tmp = {
-        tl_x - _offx * offs,
-        tl_y - _offy * offs,
+        tl_x - _off.x * offs,
+        tl_y - _off.y * offs,
         width,
         height
     };
@@ -112,16 +108,16 @@ void Graphics::DrawRect(SDL_FRect &rect, uint8_t r, uint8_t g, uint8_t b, uint8_
         SDL_RenderDrawRectF(_renderer, &rect);
     } else {
         SDL_FRect temp = rect;
-        temp.x -= _offx;
-        temp.y -= _offy;
+        temp.x -= _off.x;
+        temp.y -= _off.y;
         SDL_RenderDrawRectF(_renderer, &temp);
     }
 }
 
 void Graphics::FillRect(float tl_x, float tl_y, float width, float height, uint8_t r, uint8_t g, uint8_t b, uint8_t a, bool offs) {
     SDL_FRect tmp = {
-        tl_x - _offx * offs,
-        tl_y - _offy * offs,
+        tl_x - _off.x * offs,
+        tl_y - _off.y * offs,
         width,
         height
     };
@@ -140,22 +136,22 @@ void Graphics::FillRect(SDL_FRect &rect, uint8_t r, uint8_t g, uint8_t b, uint8_
         SDL_RenderFillRectF(_renderer, &rect);
     } else {
         SDL_FRect temp = rect;
-        temp.x -= _offx;
-        temp.y -= _offy;
+        temp.x -= _off.x;
+        temp.y -= _off.y;
         SDL_RenderFillRectF(_renderer, &temp);
     }
 }
 
 void Graphics::DrawPoint(float x, float y, uint8_t r, uint8_t g, uint8_t b, uint8_t a, bool offs) {
     SDL_SetRenderDrawColor(_renderer, r, g, b, a);
-    SDL_RenderDrawPointF(_renderer, x - _offx * offs, y - _offy * offs);
+    SDL_RenderDrawPointF(_renderer, x - _off.x * offs, y - _off.y * offs);
 }
 
 void Graphics::DrawLine(float x1, float y1, float x2, float y2, uint8_t r, uint8_t g, uint8_t b, uint8_t a, uint32_t t, bool offs) {
-    x1 -= _offx * offs;
-    x2 -= _offx * offs;
-    y1 -= _offy * offs;
-    y2 -= _offy * offs;
+    x1 -= _off.x * offs;
+    x2 -= _off.x * offs;
+    y1 -= _off.y * offs;
+    y2 -= _off.y * offs;
     SDL_SetRenderDrawColor(_renderer, r, g, b, a);
     if (t <= 1) {
         SDL_RenderDrawLineF(_renderer, x1, y1, x2, y2);
@@ -181,27 +177,28 @@ void Graphics::DrawTexture(SDL_Texture *texture, SDL_Rect &src, SDL_FRect &dst, 
         SDL_RenderCopyExF(_renderer, texture, &src, &dst, angle, center, flip);
     } else {
         SDL_FRect tmp = dst;
-        tmp.x -= _offx;
-        tmp.y -= _offy;
+        tmp.x -= _off.x;
+        tmp.y -= _off.y;
         SDL_RenderCopyExF(_renderer, texture, &src, &tmp, angle, center, flip);
     }
 }
 
 float Graphics::GetDeltaTime() {return _dt;}
 
-SDL_Point Graphics::GetCurrentResolution() {
-    SDL_Point ret;
+Vec2i Graphics::GetCurrentResolution() {
+    Vec2i ret;
     SDL_GetWindowSize(_window, &ret.x, &ret.y);
     return ret;
 }
 
-SDL_FPoint Graphics::GetCursorPosition(bool offseted) {
-    SDL_Point res = GetCurrentResolution();
+Vec2f Graphics::GetCursorPosition(bool offseted) {
+    Vec2i res;
+    res = GetCurrentResolution();
     int mouse_x, mouse_y;
     SDL_GetMouseState(&mouse_x, &mouse_y);
-    SDL_FPoint ret = {
-        (mouse_x * float(_wwidth ) / res.x) + _offx * offseted,
-        (mouse_y * float(_wheight) / res.y) + _offy * offseted};
+    Vec2f ret = {
+        (mouse_x * float(_wdim.x ) / res.x) + _off.x * offseted,
+        (mouse_y * float(_wdim.y) / res.y) + _off.y * offseted};
     return ret;
 }
 
@@ -259,12 +256,12 @@ void Graphics::BindTexture(SDL_Texture *texture) {
     SDL_SetRenderTarget(_renderer, texture);
 }
 
-void Graphics::SetOffset(SDL_FPoint &offset) {
-    _offx = offset.x;
-    _offy = offset.y;
+void Graphics::SetOffset(Vec2f offset) {
+    _off.x = offset.x;
+    _off.y = offset.y;
 }
 
 void Graphics::SetOffset(float ox, float oy) {
-    _offx = ox;
-    _offy = oy;
+    _off.x = ox;
+    _off.y = oy;
 }
