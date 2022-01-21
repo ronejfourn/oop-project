@@ -15,7 +15,7 @@ int main(int argc, char *argv[]) {
     srand(rand());
     SDL_Init(SDL_INIT_EVERYTHING);
     Graphics *graphicsInstance = Graphics::GetInstance();
-    ui *uiInstance = ui::GetInstance();
+    UI *uiInstance = UI::GetInstance();
     uiInstance->LoadFont(graphicsInstance);
     uiInstance->SetState(STATE_ALIVE);
 
@@ -101,12 +101,13 @@ int main(int argc, char *argv[]) {
         }
         inputInstance->Handle();
 
-        mouse = cam.GetCursorPosition();
-        player.FaceTowards(mouse);
-        player.Update(graphicsInstance->GetDeltaTime());
-        cam.Update();
-
-        offset = cam.GetOffset();
+        if(uiInstance->GetCurrentState() == STATE_ALIVE){
+            mouse = cam.GetCursorPosition();
+            player.FaceTowards(mouse);
+            player.Update(graphicsInstance->GetDeltaTime());
+            cam.Update();
+            offset = cam.GetOffset();
+        }
 
         SDL_FRect dmaprect = {
             -offset.x, -offset.y,
@@ -116,7 +117,8 @@ int main(int argc, char *argv[]) {
 
         graphicsInstance->Clear();
         graphicsInstance->DrawTexture(map, maprect, dmaprect);
-        cam.Render(player);
+        if(uiInstance->GetCurrentState() == STATE_ALIVE)
+            cam.Render(player);
         uiInstance->Draw(graphicsInstance, player);
 
         graphicsInstance->Update();
