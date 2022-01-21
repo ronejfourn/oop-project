@@ -15,7 +15,6 @@ struct __vec2 {
     T x, y;
     __vec2() {x = 0; y = 0;};
     __vec2(T vx, T vy) {x = vx; y = vy;};
-    __vec2(__vec2 &cp) {x = cp.x; y = cp.y;};
     __vec2 operator +(const __vec2 &op) const {return {x + op.x, y + op.y};}
     __vec2 operator -(const __vec2 &op) const {return {x - op.x, y - op.y};}
     __vec2 operator *(const __vec2 &op) const {return {x * op.x, y * op.y};}
