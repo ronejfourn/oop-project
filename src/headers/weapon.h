@@ -7,7 +7,8 @@ class Weapon {
 private:
     Sprite _sprite;
     Entity *_anchor;
-    float _radius, _angle;
+    float _radius;
+    Vec2f _dir;
     SDL_RendererFlip _flip;
 public:
     Weapon();

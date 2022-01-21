@@ -1,14 +1,25 @@
 #ifndef UTIL_H
 #define UTIL_H
-#include <cmath>
 #include <cstdint>
 
-constexpr float pi      = 3.14159265f;
-constexpr float halfpi  =     pi / 2;
-constexpr float thalfpi = 3 * pi / 2;
-constexpr float tau     = 2 * pi;
+constexpr float pi = 3.14159265f;
 
 #define ut_clamp(val, min, max) ((val) > (max)) ? (max) : ((val) < (min)) ? (min) : (val)
+
+static float Q_rsqrt(float number )
+{
+    int32_t i;
+    float x2, y;
+    const float threehalfs = 1.5f;
+    x2 = number * 0.5f;
+    y  = number;
+    i  = *(int32_t*) &y;
+    i  = 0x5f3759df - ( i >> 1 );
+    y  = *(float*)&i;
+    y  = y * (threehalfs - (x2 * y * y));   // 1st iteration
+    //  y  = y * ( threehalfs - ( x2 * y * y ) );   // 2nd iteration, this can be removed
+    return y;
+}
 
 template <typename T>
 struct __vec2 {
@@ -29,24 +40,18 @@ struct __vec2 {
     void operator /=(const T &op) {x /= op; y /= op;}
     __vec2 perpendicular() const {return {-y, x};};
     void zero() {x = 0; y = 0;};
-    float dot(const __vec2 &op) const {return x * op.y + y * op.x;};
-    float magnitude() const {return sqrtf(x * x + y * y);};
-    float angleBetn(const __vec2 &op) const {
-        float dfx = op.x - x;
-        float dfy = op.y - y;
-        float ret = dfx ? std::atan(std::abs(dfy / dfx)) : pi / 2;
-        if (dfx >= 0 && dfy >= 0)
-            return ret;
-        else if (dfx <= 0 && dfy >= 0)
-            ret = pi - ret;
-        else if (dfx <= 0 && dfy <= 0)
-            ret = pi + ret;
-        else if (dfx >= 0 && dfy <= 0)
-            ret = tau - ret;
-        return ret;
+    float dot(const __vec2 &op) const {return x * op.y + y * op.x;}
+    float magnitude() const {
+        float sqr = (x * x + y * y);
+        return Q_rsqrt(sqr) * sqr;
+    }
+    __vec2 normalized() {
+        float invmag = Q_rsqrt(x * x + y * y);
+        return {x * invmag, y * invmag};
     }
 };
 
 typedef __vec2<float> Vec2f;
 typedef __vec2<int> Vec2i;
+
 #endif
