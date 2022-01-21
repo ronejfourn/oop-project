@@ -6,7 +6,7 @@ class Entity {
 protected:
     std::string     _state;
     SDL_RendererFlip _flip;
-    Vec2f _tl, _dim;
+    Rectf _box;
     AnimatedSprite _sprite;
 
     bool _alive, _limit_speed;

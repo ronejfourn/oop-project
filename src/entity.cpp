@@ -41,14 +41,14 @@ void Entity::Die() {
 }
 
 void Entity::FaceTowards(Vec2f pos) {
-    _flip = (pos.x < _tl.x + _dim.x / 2.0) ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE;
+    _flip = (pos.x < _box.pos.x + _box.dim.x / 2.0) ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE;
 }
 
 void Entity::Draw(Graphics *g, Vec2f offset) {
     SDL_FRect tmp = {
-        _tl.x - offset.x,
-        _tl.y - offset.y,
-        _dim.x, _dim.y
+        _box.pos.x - offset.x,
+        _box.pos.y - offset.y,
+        _box.dim.x, _box.dim.y
     };
     _sprite.Draw(g, _state, tmp, _flip, true);
 }
@@ -76,12 +76,9 @@ void Entity::Move(float deltatime) {
         _limit_speed = true;
     }
 
-    _tl += _vel;
+    _box.pos += _vel;
 }
 
 Vec2f Entity::GetCenter() {
-    return {
-        _tl.x + _dim.x / 2,
-        _tl.y + _dim.y / 2,
-    };
+    return _box.pos + _box.dim / 2;
 }

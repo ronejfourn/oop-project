@@ -54,4 +54,14 @@ struct __vec2 {
 typedef __vec2<float> Vec2f;
 typedef __vec2<int> Vec2i;
 
+template <typename T>
+struct __rect {
+    __vec2<T> pos, dim;
+    __rect() {pos.x = 0; pos.y = 0; dim.x = 0; dim.y = 0;}
+    __rect(T x, T y, T w, T h) {pos.x = x; pos.y = y; dim.x = w; dim.y = h;}
+};
+
+typedef __rect<float> Rectf;
+typedef __rect<int> Recti;
+
 #endif

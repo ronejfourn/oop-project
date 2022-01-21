@@ -12,9 +12,9 @@ namespace {
 }
 
 Player::Player() : Entity() {
-    _weapon = new Weapon(singleTexture, this, 20);
-    _state  = "idle";
-    _dim    = {p_width, p_height};
+    _weapon  = new Weapon(singleTexture, this, 20);
+    _state   = "idle";
+    _box.dim = {p_width, p_height};
     _hp = 100;
     _sprite.SetTexture(singleTexture);
     _sprite.AddAnimation("idle", 128, 106, s_width, s_height, 4);
@@ -23,8 +23,8 @@ Player::Player() : Entity() {
 }
 
 Player::Player(float center_x, float center_y) : Player() {
-    _tl = { center_x - p_width / 2, center_y - p_height / 2 };
-    _dim = { p_width, p_height };
+    _box.pos = { center_x - p_width / 2, center_y - p_height / 2 };
+    _box.dim = { p_width, p_height };
 }
 
 void Player::TakeDamage(float damage) {
@@ -37,7 +37,7 @@ void Player::TakeDamage(float damage) {
 }
 
 void Player::FaceTowards(Vec2f pos) {
-    _flip = (pos.x < _tl.x + _dim.x / 2.0) ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE;
+    _flip = (pos.x < _box.pos.x + _box.dim.x / 2.0) ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE;
     _weapon->PointTowards(pos);
 }
 
@@ -60,9 +60,9 @@ void Player::Update(float deltatime) {
 
 void Player::Draw(Graphics *g, Vec2f offset) {
     SDL_FRect dst = {
-        _tl.x - offset.x,
-        _tl.y - offset.y,
-        _dim.x, _dim.y
+        _box.pos.x - offset.x,
+        _box.pos.y - offset.y,
+        _box.dim.x, _box.dim.y
     };
     if (_state == "hurt") {
         dst.y += 4;

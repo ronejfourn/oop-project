@@ -3,6 +3,7 @@
 #include "headers/input.h"
 #include "headers/weapon.h"
 #include "headers/ui.h"
+#include "headers/camera.h"
 #include <SDL2/SDL.h>
 #include <functional>
 #include <iostream>
@@ -22,7 +23,7 @@ int main(int argc, char *argv[]) {
     graphicsInstance->SetTitle("Game", "../../res/icon.bmp");
 
     singleTexture = graphicsInstance->LoadImage("../../res/0x72_DungeonTilesetII_v1.4/0x72_DungeonTilesetII_v1.4.png");
-    Player player(1280 / 2.0, 720 / 2.0);
+    Player player(0, 0);
     Tilemap floor(singleTexture);
     floor.AddTile(16, 64);
     floor.AddTile(32, 64);
@@ -55,9 +56,6 @@ int main(int argc, char *argv[]) {
         float(tsize * 3 * 32)
     };
 
-    dmaprect.x -= (dmaprect.w - 1280) / 2;
-    dmaprect.y -= (dmaprect.h - 720 ) / 2 ;
-
     uint32_t *indices = new uint32_t [maprect.w / tsize * maprect.h / tsize];
     SDL_Texture *map = graphicsInstance->CreateTexture(maprect.w, maprect.h);
     for (int x = 0; x < maprect.w / tsize; x ++) {
@@ -85,6 +83,8 @@ int main(int argc, char *argv[]) {
     inputInstance->BindActionToKey(SDL_SCANCODE_S, std::bind(&Player::MoveDown , &player), true);
     inputInstance->BindActionToKey(SDL_SCANCODE_D, std::bind(&Player::MoveRight, &player), true);
 
+    Camera cam(&player, {0, 0, 1280, 720});
+
     while(1) {
         while(SDL_PollEvent(&e)) {
             if (e.type == SDL_QUIT) {
@@ -101,11 +101,12 @@ int main(int argc, char *argv[]) {
         }
         inputInstance->Handle();
 
-        mouse = graphicsInstance->GetCursorPosition() + offset;
+        mouse = cam.GetCursorPosition();
         player.FaceTowards(mouse);
         player.Update(graphicsInstance->GetDeltaTime());
-        pcur = player.GetCenter();
-        offset = pcur - ini;
+        cam.Update();
+
+        offset = cam.GetOffset();
 
         SDL_FRect dmaprect = {
             -offset.x, -offset.y,
@@ -115,7 +116,7 @@ int main(int argc, char *argv[]) {
 
         graphicsInstance->Clear();
         graphicsInstance->DrawTexture(map, maprect, dmaprect);
-        player.Draw(graphicsInstance, offset);
+        cam.Render(player);
         uiInstance->Draw(graphicsInstance, player);
 
         graphicsInstance->Update();
