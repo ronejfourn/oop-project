@@ -5,8 +5,6 @@
 #include "headers/ui.h"
 #include "headers/camera.h"
 #include <SDL2/SDL.h>
-#include <functional>
-#include <iostream>
 
 SDL_Texture *singleTexture;
 

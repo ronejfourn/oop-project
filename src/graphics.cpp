@@ -1,5 +1,4 @@
 #include "headers/graphics.h"
-#include "headers/logger.h"
 #include "SDL2/SDL_hints.h"
 #include "SDL2/SDL_timer.h"
 #include "SDL2/SDL_mouse.h"

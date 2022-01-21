@@ -1,5 +1,4 @@
 #include "headers/ui.h"
-#include "headers/logger.h"
 #include <SDL2/SDL.h>
 
 extern SDL_Texture *singleTexture;
