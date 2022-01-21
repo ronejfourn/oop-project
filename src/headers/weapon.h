@@ -1,3 +1,4 @@
+#pragma once
 #include "sprite.h"
 
 class Entity;

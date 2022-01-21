@@ -1,4 +1,4 @@
-#include "sprite.h"
+#include "headers/sprite.h"
 
 Sprite::Sprite() {
     _texture = nullptr;
@@ -30,10 +30,10 @@ void Sprite::AddState(std::string state, int x, int y, int w, int h) {
     _src[state] = {x, y, w, h};
 }
 
-void Sprite::Draw(Graphics *g, std::string state, SDL_FRect &dst, SDL_RendererFlip flip, bool offs, float angle, SDL_FPoint *center) {
-    g->DrawTexture(_texture, _src[state], dst, offs, center, angle, flip);
+void Sprite::Draw(Graphics *g, std::string state, SDL_FRect &dst, SDL_RendererFlip flip, float angle, SDL_FPoint *center) {
+    g->DrawTexture(_texture, _src[state], dst, center, angle, flip);
 }
 
-void Sprite::Draw(Graphics *g, std::string state, SDL_Rect &dst, SDL_RendererFlip flip, float angle, SDL_Point *center) {
+void Sprite::Draw(Graphics *g, std::string state, SDL_Rect  &dst, SDL_RendererFlip flip, float angle, SDL_Point  *center) {
     g->DrawTexture(_texture, _src[state], dst, center, angle, flip);
 }

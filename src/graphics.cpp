@@ -1,6 +1,5 @@
-#include "graphics.h"
-#include "entity.h"
-#include "logger.h"
+#include "headers/graphics.h"
+#include "headers/logger.h"
 #include "SDL2/SDL_hints.h"
 #include "SDL2/SDL_timer.h"
 #include "SDL2/SDL_mouse.h"
@@ -86,12 +85,10 @@ void Graphics::SetTargetFPS(uint32_t fps) {
     _ft = 1000.0 / fps;
 }
 
-void Graphics::DrawRect(float tl_x, float tl_y, float width, float height, uint8_t r, uint8_t g, uint8_t b, uint8_t a, bool offs) {
+void Graphics::DrawRect(float tl_x, float tl_y, float width, float height, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
     SDL_FRect tmp = {
-        tl_x - _off.x * offs,
-        tl_y - _off.y * offs,
-        width,
-        height
+        tl_x, tl_y,
+        width, height
     };
     SDL_SetRenderDrawColor(_renderer, r, g, b, a);
     SDL_RenderDrawRectF(_renderer, &tmp);
@@ -102,24 +99,15 @@ void Graphics::DrawRect(SDL_Rect &rect, uint8_t r, uint8_t g, uint8_t b, uint8_t
     SDL_RenderDrawRect(_renderer, &rect);
 }
 
-void Graphics::DrawRect(SDL_FRect &rect, uint8_t r, uint8_t g, uint8_t b, uint8_t a, bool offs) {
+void Graphics::DrawRect(SDL_FRect &rect, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
     SDL_SetRenderDrawColor(_renderer, r, g, b, a);
-    if (!offs) {
-        SDL_RenderDrawRectF(_renderer, &rect);
-    } else {
-        SDL_FRect temp = rect;
-        temp.x -= _off.x;
-        temp.y -= _off.y;
-        SDL_RenderDrawRectF(_renderer, &temp);
-    }
+    SDL_RenderDrawRectF(_renderer, &rect);
 }
 
-void Graphics::FillRect(float tl_x, float tl_y, float width, float height, uint8_t r, uint8_t g, uint8_t b, uint8_t a, bool offs) {
+void Graphics::FillRect(float tl_x, float tl_y, float width, float height, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
     SDL_FRect tmp = {
-        tl_x - _off.x * offs,
-        tl_y - _off.y * offs,
-        width,
-        height
+        tl_x, tl_y,
+        width, height
     };
     SDL_SetRenderDrawColor(_renderer, r, g, b, a);
     SDL_RenderFillRectF(_renderer, &tmp);
@@ -130,28 +118,17 @@ void Graphics::FillRect(SDL_Rect &rect, uint8_t r, uint8_t g, uint8_t b, uint8_t
     SDL_RenderFillRect(_renderer, &rect);
 }
 
-void Graphics::FillRect(SDL_FRect &rect, uint8_t r, uint8_t g, uint8_t b, uint8_t a, bool offs) {
+void Graphics::FillRect(SDL_FRect &rect, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
     SDL_SetRenderDrawColor(_renderer, r, g, b, a);
-    if (!offs) {
-        SDL_RenderFillRectF(_renderer, &rect);
-    } else {
-        SDL_FRect temp = rect;
-        temp.x -= _off.x;
-        temp.y -= _off.y;
-        SDL_RenderFillRectF(_renderer, &temp);
-    }
+    SDL_RenderFillRectF(_renderer, &rect);
 }
 
-void Graphics::DrawPoint(float x, float y, uint8_t r, uint8_t g, uint8_t b, uint8_t a, bool offs) {
+void Graphics::DrawPoint(float x, float y, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
     SDL_SetRenderDrawColor(_renderer, r, g, b, a);
-    SDL_RenderDrawPointF(_renderer, x - _off.x * offs, y - _off.y * offs);
+    SDL_RenderDrawPointF(_renderer, x, y);
 }
 
-void Graphics::DrawLine(float x1, float y1, float x2, float y2, uint8_t r, uint8_t g, uint8_t b, uint8_t a, uint32_t t, bool offs) {
-    x1 -= _off.x * offs;
-    x2 -= _off.x * offs;
-    y1 -= _off.y * offs;
-    y2 -= _off.y * offs;
+void Graphics::DrawLine(float x1, float y1, float x2, float y2, uint8_t r, uint8_t g, uint8_t b, uint8_t a, uint32_t t) {
     SDL_SetRenderDrawColor(_renderer, r, g, b, a);
     if (t <= 1) {
         SDL_RenderDrawLineF(_renderer, x1, y1, x2, y2);
@@ -172,15 +149,8 @@ void Graphics::DrawTexture(SDL_Texture *texture, SDL_Rect &src, SDL_Rect &dst, S
     SDL_RenderCopyEx(_renderer, texture, &src, &dst, angle, center, flip);
 }
 
-void Graphics::DrawTexture(SDL_Texture *texture, SDL_Rect &src, SDL_FRect &dst, bool offs, SDL_FPoint *center, float angle, SDL_RendererFlip flip) {
-    if (!offs) {
-        SDL_RenderCopyExF(_renderer, texture, &src, &dst, angle, center, flip);
-    } else {
-        SDL_FRect tmp = dst;
-        tmp.x -= _off.x;
-        tmp.y -= _off.y;
-        SDL_RenderCopyExF(_renderer, texture, &src, &tmp, angle, center, flip);
-    }
+void Graphics::DrawTexture(SDL_Texture *texture, SDL_Rect &src, SDL_FRect &dst, SDL_FPoint *center, float angle, SDL_RendererFlip flip) {
+    SDL_RenderCopyExF(_renderer, texture, &src, &dst, angle, center, flip);
 }
 
 float Graphics::GetDeltaTime() {return _dt;}
@@ -197,8 +167,9 @@ Vec2f Graphics::GetCursorPosition(bool offseted) {
     int mouse_x, mouse_y;
     SDL_GetMouseState(&mouse_x, &mouse_y);
     Vec2f ret = {
-        (mouse_x * float(_wdim.x ) / res.x) + _off.x * offseted,
-        (mouse_y * float(_wdim.y) / res.y) + _off.y * offseted};
+        (mouse_x * float(_wdim.x ) / res.x),
+        (mouse_y * float(_wdim.y) / res.y)
+    };
     return ret;
 }
 
@@ -254,14 +225,4 @@ SDL_Texture *Graphics::CreateTexture(int width, int height) {
 
 void Graphics::BindTexture(SDL_Texture *texture) {
     SDL_SetRenderTarget(_renderer, texture);
-}
-
-void Graphics::SetOffset(Vec2f offset) {
-    _off.x = offset.x;
-    _off.y = offset.y;
-}
-
-void Graphics::SetOffset(float ox, float oy) {
-    _off.x = ox;
-    _off.y = oy;
 }

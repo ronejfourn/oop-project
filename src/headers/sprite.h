@@ -20,6 +20,6 @@ public:
 
     void AddState(std::string state, int x, int y, int w, int h);
 
-    virtual void Draw(Graphics *g, std::string state, SDL_FRect &dst, SDL_RendererFlip flip, bool offs, float angle = 0, SDL_FPoint *center = NULL);
-    virtual void Draw(Graphics *g, std::string state, SDL_Rect &dst, SDL_RendererFlip flip, float angle = 0, SDL_Point *center = NULL);
+    virtual void Draw(Graphics *g, std::string state, SDL_FRect &dst, SDL_RendererFlip flip, float angle = 0, SDL_FPoint *center = NULL);
+    virtual void Draw(Graphics *g, std::string state, SDL_Rect  &dst, SDL_RendererFlip flip, float angle = 0, SDL_Point  *center = NULL);
 };

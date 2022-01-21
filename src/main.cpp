@@ -1,8 +1,8 @@
-#include "tilemap.h"
-#include "player.h"
-#include "input.h"
-#include "weapon.h"
-#include "ui.h"
+#include "headers/tilemap.h"
+#include "headers/player.h"
+#include "headers/input.h"
+#include "headers/weapon.h"
+#include "headers/ui.h"
 #include <SDL2/SDL.h>
 #include <functional>
 #include <iostream>
@@ -85,8 +85,6 @@ int main(int argc, char *argv[]) {
     inputInstance->BindActionToKey(SDL_SCANCODE_S, std::bind(&Player::MoveDown , &player), true);
     inputInstance->BindActionToKey(SDL_SCANCODE_D, std::bind(&Player::MoveRight, &player), true);
 
-    Weapon weap(singleTexture, &player, 36);
-
     while(1) {
         while(SDL_PollEvent(&e)) {
             if (e.type == SDL_QUIT) {
@@ -107,13 +105,10 @@ int main(int argc, char *argv[]) {
         player.FaceTowards(mouse);
         player.Update(graphicsInstance->GetDeltaTime());
         pcur = player.GetCenter();
-        graphicsInstance->SetOffset(pcur - ini);
 
         graphicsInstance->Clear();
         graphicsInstance->DrawTexture(map, maprect, dmaprect);
         player.Draw(graphicsInstance);
-        weap.PointTowards(mouse);
-        weap.Draw(graphicsInstance);
         uiInstance->Draw(graphicsInstance, player);
 
         graphicsInstance->Update();

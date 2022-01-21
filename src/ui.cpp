@@ -1,5 +1,5 @@
-#include "ui.h"
-#include "logger.h"
+#include "headers/ui.h"
+#include "headers/logger.h"
 #include <SDL2/SDL.h>
 
 extern SDL_Texture *singleTexture;
@@ -41,7 +41,7 @@ void ui::DisplayText(Graphics *g, std::string msg, SDL_Rect dst){
     if((dst.h / 18) * (dst.w / 14) < msg.size())
         Logger::LogWarning("Message does not fit in the box. Characters will be squished");
     const char *msgStr = msg.c_str();
-    
+
     SDL_Rect chrDst;
     chrDst.h = dst.h < 18 ? dst.h : 18;
     chrDst.w = (dst.w / msg.size()) < 14 ? dst.w / msg.size() : 14;
@@ -50,7 +50,7 @@ void ui::DisplayText(Graphics *g, std::string msg, SDL_Rect dst){
 
     for(int i = 0; i < msg.size(); i++){
         SDL_Rect src = GetCharCoord(msgStr[i]);
-        g->DrawTexture(fontTexture, src, chrDst, false);
+        g->DrawTexture(fontTexture, src, chrDst);
         chrDst.x += chrDst.w;
     }
 }
@@ -61,7 +61,7 @@ void ui::DisplayInfo(Graphics *g, Player &p){
     src.x = 288 * (hp >= 75) + 304 * (hp < 75 && hp >=25) + 320 * (hp < 25);
 
     SDL_Rect healthDst = {0, 0, src.w, src.h};
-    g->DrawTexture(singleTexture, src, healthDst, false);
+    g->DrawTexture(singleTexture, src, healthDst);
 
     healthDst.x += src.w;
     healthDst.w = 100;

@@ -1,4 +1,4 @@
-#include "entity.h"
+#include "headers/entity.h"
 
 Entity::Entity() {
     _alive = true;

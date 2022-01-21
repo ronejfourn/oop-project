@@ -1,4 +1,4 @@
-#include "animated_sprite.h"
+#include "headers/animated_sprite.h"
 
 AnimatedSprite::AnimatedSprite() {
     _currentframe = 0;
@@ -35,11 +35,11 @@ void AnimatedSprite::AddAnimation(std::string state, int x, int y, int w, int h,
     _frametime = 1000.0 / (fps ? fps : 12);
 }
 
-void AnimatedSprite::Draw(Graphics *g, std::string state, SDL_FRect &dst, SDL_RendererFlip flip, bool offs, float angle, SDL_FPoint *center) {
+void AnimatedSprite::Draw(Graphics *g, std::string state, SDL_FRect &dst, SDL_RendererFlip flip, float angle, SDL_FPoint *center) {
     _currentframe %= _framecount[state];
     SDL_Rect src = _src[state];
     src.x += _currentframe * src.w;
-    g->DrawTexture(_texture, src, dst, offs, center, angle, flip);
+    g->DrawTexture(_texture, src, dst, center, angle, flip);
     _elapsedtime += g->GetDeltaTime();
     if (_elapsedtime >= _frametime) {
         _elapsedtime = 0;

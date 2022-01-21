@@ -1,4 +1,5 @@
-#include "player.h"
+#include "headers/player.h"
+#include "headers/weapon.h"
 
 extern SDL_Texture *singleTexture;
 
@@ -11,6 +12,7 @@ namespace {
 }
 
 Player::Player() : Entity() {
+    _weapon = new Weapon(singleTexture, this, 20);
     _state  = "idle";
     _dim    = {p_width, p_height};
     _hp = 100;
@@ -32,6 +34,11 @@ void Player::TakeDamage(float damage) {
         if (_hp <= 0)
             _alive = false;
     }
+}
+
+void Player::FaceTowards(Vec2f pos) {
+    _flip = (pos.x < _tl.x + _dim.x / 2.0) ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE;
+    _weapon->PointTowards(pos);
 }
 
 void Player::Update(float deltatime) {
@@ -66,4 +73,5 @@ void Player::Draw(Graphics *g) {
     } else {
         _sprite.Draw(g, _state, dst, _flip, true);
     }
+    _weapon->Draw(g);
 }

@@ -1,4 +1,4 @@
-#include "input.h"
+#include "headers/input.h"
 
 #define isDown 0x01
 #define isHeld 0x02
