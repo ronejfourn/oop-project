@@ -1,5 +1,4 @@
 #include "headers/tilemap.h"
-#include "headers/logger.h"
 
 Tilemap::Tilemap() {
     _texture = nullptr;

@@ -2,7 +2,6 @@
 #include "headers/player.h"
 #include "headers/camera.h"
 #include "headers/utils.h"
-#include "iostream"
 
 Camera::Camera() {
     _anchor = nullptr;
