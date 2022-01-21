@@ -5,22 +5,27 @@
 
 typedef enum state {STATE_MENU, STATE_ALIVE, STATE_DEAD} State;
 
-class ui{
-    static ui *_instance;
+const int defaultSize = 18;
+const int defaultWidth = 14;
+const float fontRatio = 14 / 18.0;
+
+class UI{
+    static UI *_instance;
 private:
-    SDL_Texture *fontTexture;
-    State currentState;
-    ui();
+    SDL_Texture *_fontTexture;
+    State _currentState;
+    UI();
 public:
-    static ui *GetInstance();
-    ~ui();
+    static UI *GetInstance();
+    ~UI();
 
     void SetState(State state);
     void LoadFont(Graphics *g);
     State GetCurrentState();
 
     SDL_Rect GetCharCoord(const char ch);
-    void DisplayText(Graphics *g, std::string msg, SDL_Rect dst);
+    void DisplayText(Graphics *g, std::string msg, SDL_Rect dst, uint16_t ftSize = defaultSize);
     void DisplayInfo(Graphics *g, Player &p);
+    void DrawMenu(Graphics *g);
     void Draw(Graphics *g, Player &p);
 };
