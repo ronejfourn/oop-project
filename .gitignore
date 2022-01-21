@@ -6,3 +6,4 @@ bin/
 x64/
 *.data
 makefile
+.vscode/

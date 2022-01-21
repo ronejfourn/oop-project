@@ -174,15 +174,19 @@
     <ClInclude Include="src\animated_sprite.h" />
     <ClInclude Include="src\entity.h" />
     <ClInclude Include="src\graphics.h" />
+    <ClInclude Include="src\headers\camera.h" />
+    <ClInclude Include="src\headers\ui.h" />
+    <ClInclude Include="src\headers\utils.h" />
+    <ClInclude Include="src\headers\weapon.h" />
     <ClInclude Include="src\input.h" />
     <ClInclude Include="src\logger.h" />
     <ClInclude Include="src\player.h" />
     <ClInclude Include="src\sprite.h" />
     <ClInclude Include="src\tilemap.h" />
-    <ClInclude Include="src\ui.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\animated_sprite.cpp" />
+    <ClCompile Include="src\camera.cpp" />
     <ClCompile Include="src\entity.cpp" />
     <ClCompile Include="src\graphics.cpp" />
     <ClCompile Include="src\input.cpp" />
@@ -191,6 +195,7 @@
     <ClCompile Include="src\sprite.cpp" />
     <ClCompile Include="src\tilemap.cpp" />
     <ClCompile Include="src\ui.cpp" />
+    <ClCompile Include="src\weapon.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\icon.bmp" />

@@ -17,7 +17,7 @@ int main(int argc, char *argv[]) {
     Graphics *graphicsInstance = Graphics::GetInstance();
     UI *uiInstance = UI::GetInstance();
     uiInstance->LoadFont(graphicsInstance);
-    uiInstance->SetState(STATE_ALIVE);
+    uiInstance->SetState(STATE_MENU);
 
     graphicsInstance->SetTargetFPS(60);
     graphicsInstance->SetTitle("Game", "../../res/icon.bmp");
@@ -82,6 +82,9 @@ int main(int argc, char *argv[]) {
     inputInstance->BindActionToKey(SDL_SCANCODE_A, std::bind(&Player::MoveLeft , &player), true);
     inputInstance->BindActionToKey(SDL_SCANCODE_S, std::bind(&Player::MoveDown , &player), true);
     inputInstance->BindActionToKey(SDL_SCANCODE_D, std::bind(&Player::MoveRight, &player), true);
+    inputInstance->BindActionToKey(SDL_SCANCODE_DOWN, std::bind(&UI::ChangeOption, uiInstance, false), false);
+    inputInstance->BindActionToKey(SDL_SCANCODE_UP,   std::bind(&UI::ChangeOption, uiInstance, true),  false);
+    inputInstance->BindActionToKey(SDL_SCANCODE_RETURN, std::bind(&UI::ChooseOption, uiInstance), false);
 
     Camera cam(&player, {0, 0, 1280, 720});
 

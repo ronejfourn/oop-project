@@ -6,6 +6,9 @@ extern SDL_Texture *singleTexture;
 
 UI *UI::_instance = nullptr;
 
+std::string menuItems[3] = {"Play", "Options", "Exit"};
+std::string optionsItems[] = {"Back"};
+
 UI::UI(){
     _currentState = STATE_MENU;
 }
@@ -27,6 +30,40 @@ State UI::GetCurrentState(){
 
 void UI::SetState(State state){
     _currentState = state;
+    if(_currentState == STATE_MENU)
+        _selectedOptionIndex = 0;
+    if(_currentState == STATE_OPTIONS)
+        _selectedOptionIndex = 0;
+}
+
+void UI::ChangeOption(bool up){
+    uint8_t max;
+    if(_currentState == STATE_MENU)
+        max = 2;
+    else if(_currentState == STATE_OPTIONS)
+        max = 1;
+    if(up)
+        _selectedOptionIndex = _selectedOptionIndex ? _selectedOptionIndex - 1 : max;
+    else
+        _selectedOptionIndex = (_selectedOptionIndex == max) ? 0 : _selectedOptionIndex + 1;
+}
+
+void UI::ChooseOption(){
+    if(_currentState == STATE_MENU){
+        if(_selectedOptionIndex == 0)
+            SetState(STATE_ALIVE);
+        else if(_selectedOptionIndex == 1)
+            SetState(STATE_OPTIONS);
+        else if(_selectedOptionIndex == 2){
+            SDL_Event e;
+            e.type = SDL_QUIT;
+            SDL_PushEvent(&e);
+        }
+    }
+    else if(_currentState == STATE_OPTIONS){
+        if(_selectedOptionIndex == 0)
+            SetState(STATE_MENU);
+    }
 }
 
 SDL_Rect UI::GetCharCoord(const char ch){
@@ -46,7 +83,7 @@ void UI::DisplayText(Graphics *g, std::string msg, SDL_Rect dst, uint16_t ftSize
     chrDst.w = fontRatio * chrDst.h;
 
     if((dst.h / chrDst.h) * (dst.w / float(chrDst.w)) < txtSize){
-        Logger::LogWarning("Message does not fit in the box. Characters will be squished");
+        Logger::LogWarning(("Following message does not fit in the box. Characters will be squished: " + msg).c_str());
         chrDst.w = ((dst.h / chrDst.h) * dst.w) / msg.size();
     }
 
@@ -78,7 +115,7 @@ void UI::DisplayInfo(Graphics *g, Player &p){
     g->DrawTexture(singleTexture, src, healthDst);
 
     healthDst.x += healthDst.w;
-    healthDst.w = 100;
+    healthDst.w = 120;
     DisplayText(g, "HP:" + std::to_string(int(hp)), healthDst, healthDst.h );
 }
 
@@ -88,11 +125,26 @@ void UI::DrawMenu(Graphics *g){
     menuBox.x = (windowSize.x - menuBox.w) / 2;
     menuBox.y = (windowSize.y - menuBox.h) / 2;
     menuBox.h /= 3;
-    DisplayText(g, "Play", menuBox, 35);
-    menuBox.y += menuBox.h;
-    DisplayText(g, "Options", menuBox, 35);
-    menuBox.y += menuBox.h;
-    DisplayText(g, "Exit", menuBox, 35);
+
+    uint16_t ftSize = 35;
+    for(const auto &i : menuItems){
+        DisplayText(g, i, menuBox, i == menuItems[_selectedOptionIndex] ? 40 : ftSize);
+        menuBox.y += menuBox.h;
+    }
+}
+
+void UI::DrawOptions(Graphics *g){
+    Vec2i windowSize = g->GetCurrentResolution();
+    SDL_Rect optionsBox = {0, 0, windowSize.x / 4, windowSize.y / 4};
+    optionsBox.x = (windowSize.x - optionsBox.w) / 2;
+    optionsBox.y = (windowSize.y - optionsBox.h) / 2;
+    optionsBox.h /= 3;
+
+    uint16_t ftSize = 28;
+    for(const auto &i : optionsItems){
+        DisplayText(g, i, optionsBox, i == menuItems[_selectedOptionIndex] ? 35 : ftSize);
+        optionsBox.y += optionsBox.h;
+    }
 }
 
 void UI::Draw(Graphics *g, Player &p){
@@ -100,4 +152,6 @@ void UI::Draw(Graphics *g, Player &p){
         DisplayInfo(g, p);
     else if(_currentState == STATE_MENU)
         DrawMenu(g);
+    else if(_currentState == STATE_OPTIONS)
+        DrawOptions(g);
 }
