@@ -9,7 +9,7 @@ public:
     Player();
     Player(float center_x, float center_y);
     void Update(float deltatime) override;
-    void Draw(Graphics *g) override;
+    void Draw(Graphics *g, Vec2f offset) override;
     void TakeDamage(float damage) override;
     void FaceTowards(Vec2f pos) override;
 };

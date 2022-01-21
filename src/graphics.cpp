@@ -161,7 +161,7 @@ Vec2i Graphics::GetCurrentResolution() {
     return ret;
 }
 
-Vec2f Graphics::GetCursorPosition(bool offseted) {
+Vec2f Graphics::GetCursorPosition() {
     Vec2i res;
     res = GetCurrentResolution();
     int mouse_x, mouse_y;

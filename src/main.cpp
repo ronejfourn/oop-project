@@ -76,7 +76,7 @@ int main(int argc, char *argv[]) {
     graphicsInstance->BindTexture(NULL);
     delete []indices;
 
-    Vec2f ini, pcur;
+    Vec2f ini, pcur, offset(0, 0);
     ini = player.GetCenter();
 
     Input *inputInstance = Input::GetInstance();
@@ -101,14 +101,21 @@ int main(int argc, char *argv[]) {
         }
         inputInstance->Handle();
 
-        mouse = graphicsInstance->GetCursorPosition(true);
+        mouse = graphicsInstance->GetCursorPosition() + offset;
         player.FaceTowards(mouse);
         player.Update(graphicsInstance->GetDeltaTime());
         pcur = player.GetCenter();
+        offset = pcur - ini;
+
+        SDL_FRect dmaprect = {
+            -offset.x, -offset.y,
+            float(tsize * 3 * 70),
+            float(tsize * 3 * 32)
+        };
 
         graphicsInstance->Clear();
         graphicsInstance->DrawTexture(map, maprect, dmaprect);
-        player.Draw(graphicsInstance);
+        player.Draw(graphicsInstance, offset);
         uiInstance->Draw(graphicsInstance, player);
 
         graphicsInstance->Update();

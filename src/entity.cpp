@@ -44,9 +44,10 @@ void Entity::FaceTowards(Vec2f pos) {
     _flip = (pos.x < _tl.x + _dim.x / 2.0) ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE;
 }
 
-void Entity::Draw(Graphics *g) {
+void Entity::Draw(Graphics *g, Vec2f offset) {
     SDL_FRect tmp = {
-        _tl.x , _tl.y,
+        _tl.x - offset.x,
+        _tl.y - offset.y,
         _dim.x, _dim.y
     };
     _sprite.Draw(g, _state, tmp, _flip, true);

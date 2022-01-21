@@ -13,6 +13,6 @@ public:
     Weapon();
     Weapon(SDL_Texture *texture, Entity *anchor, float rad);
 
-    virtual void Draw(Graphics *g);
+    virtual void Draw(Graphics *g, Vec2f offset);
     void PointTowards(Vec2f target);
 };

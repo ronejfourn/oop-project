@@ -14,15 +14,15 @@ Weapon::Weapon(SDL_Texture *texture, Entity *anchor, float rad) : Weapon() {
     _sprite.AddState("default", 325, 180, 7, 25); // PlaceHolder
 }
 
-void Weapon::Draw(Graphics *g) {
+void Weapon::Draw(Graphics *g, Vec2f offset) {
     Vec2f a;
     a = _anchor->GetCenter();
     SDL_FPoint b = { // Placeholder
         10.5, 37.5
     };
     SDL_FRect dst = {
-        a.x + float(cos(_angle)) * _radius - b.x,
-        a.y - float(sin(_angle)) * _radius - b.y,
+        a.x + float(cos(_angle)) * _radius - b.x - offset.x,
+        a.y - float(sin(_angle)) * _radius - b.y - offset.y,
         b.x * 2,
         b.y * 2
     };

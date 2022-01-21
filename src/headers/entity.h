@@ -32,5 +32,5 @@ public:
     virtual void Die();
     virtual void FaceTowards(Vec2f pos);
 
-    virtual void Draw(Graphics *g);
+    virtual void Draw(Graphics *g, Vec2f offset);
 };
