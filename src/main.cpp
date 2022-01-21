@@ -1,9 +1,9 @@
-#include "headers/tilemap.h"
 #include "headers/player.h"
 #include "headers/input.h"
 #include "headers/weapon.h"
 #include "headers/ui.h"
 #include "headers/camera.h"
+#include <vector>
 #include <SDL2/SDL.h>
 
 SDL_Texture *singleTexture;
@@ -22,15 +22,15 @@ int main(int argc, char *argv[]) {
 
     singleTexture = graphicsInstance->LoadImage("../../res/0x72_DungeonTilesetII_v1.4/0x72_DungeonTilesetII_v1.4.png");
     Player player(0, 0);
-    Tilemap floor(singleTexture);
-    floor.AddTile(16, 64);
-    floor.AddTile(32, 64);
-    floor.AddTile(48, 64);
-    floor.AddTile(16, 80);
-    floor.AddTile(32, 80);
-    floor.AddTile(48, 80);
-    floor.AddTile(16, 96);
-    floor.AddTile(32, 96);
+    std::vector<Vec2i> tilemap;
+    tilemap.push_back({16, 64});
+    tilemap.push_back({32, 64});
+    tilemap.push_back({48, 64});
+    tilemap.push_back({16, 80});
+    tilemap.push_back({32, 80});
+    tilemap.push_back({48, 80});
+    tilemap.push_back({16, 96});
+    tilemap.push_back({32, 96});
     Vec2f mouse;
 
     SDL_Event e;
@@ -62,11 +62,17 @@ int main(int argc, char *argv[]) {
         }
     }
     graphicsInstance->BindTexture(map);
+    SDL_Rect tilesrc = {
+        0, 0,
+        tsize, tsize
+    };
     for (int x = 0; x < maprect.w / tsize; x ++) {
         tile.x = tsize * x;
         for (int y = 0; y < maprect.h / tsize; y ++) {
             tile.y = tsize * y;
-            floor.Draw(graphicsInstance, indices[x * maprect.h / tsize + y], tile);
+            tilesrc.x = tilemap[indices[x * maprect.h / tsize + y]].x;
+            tilesrc.y = tilemap[indices[x * maprect.h / tsize + y]].y;
+            graphicsInstance->DrawTexture(singleTexture, tilesrc, tile);
         }
     }
     graphicsInstance->BindTexture(NULL);
