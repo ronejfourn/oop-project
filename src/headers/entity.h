@@ -11,6 +11,7 @@ protected:
 
     bool _alive, _limit_speed;
     float _hp, _recovertime, _htime;
+    float _maxspd, _maxdspd, _accns;
     Vec2f _vel, _accn;
 
     void Move(float deltatime);

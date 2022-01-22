@@ -4,11 +4,10 @@
 extern SDL_Texture *singleTexture;
 
 namespace {
-    constexpr float s_scale  = 3;
-    constexpr int   s_width  = 16;
-    constexpr int   s_height = 22;
-    constexpr float p_width  = s_width  * s_scale;
-    constexpr float p_height = s_height * s_scale;
+    const int s_width  = 16;
+    const int s_height = 22;
+    const float p_width  = s_width  * 2;
+    const float p_height = s_height * 2;
 }
 
 Player::Player() : Entity() {
@@ -23,7 +22,7 @@ Player::Player() : Entity() {
 }
 
 Player::Player(float center_x, float center_y) : Player() {
-    _box.pos = { center_x - p_width / 2, center_y - p_height / 2 };
+    _box.pos = { center_x - p_width  / 2.0f, center_y - p_height / 2.0f };
     _box.dim = { p_width, p_height };
 }
 
@@ -56,6 +55,7 @@ void Player::Update(float deltatime) {
     } else {
         _state = "idle";
     }
+    _sprite.Animate(deltatime, _state);
 }
 
 void Player::Draw(Graphics *g, Vec2f offset) {
@@ -68,11 +68,11 @@ void Player::Draw(Graphics *g, Vec2f offset) {
         dst.y += 4;
         SDL_SetTextureAlphaMod(_sprite.GetTexture(), 200);
         SDL_SetTextureColorMod(_sprite.GetTexture(), 200, 0, 0);
-        _sprite.Draw(g, _state, dst, _flip, true);
+        _sprite.Draw(g, _state, dst, _flip);
         SDL_SetTextureAlphaMod(_sprite.GetTexture(), 255);
         SDL_SetTextureColorMod(_sprite.GetTexture(), 255, 255, 255);
     } else {
-        _sprite.Draw(g, _state, dst, _flip, true);
+        _sprite.Draw(g, _state, dst, _flip);
     }
     _weapon->Draw(g, offset);
 }

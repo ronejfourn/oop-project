@@ -26,34 +26,31 @@ void AnimatedSprite::SetFPS(uint32_t fps) {
     _frametime = fps ? 1000.0 / fps : _frametime;
 }
 
-void AnimatedSprite::AddAnimation(std::string state, int x, int y, int w, int h, uint32_t frameCount, uint32_t fps) {
+void AnimatedSprite::AddAnimation(std::string state, int x, int y, int w, int h, uint32_t frameCount) {
     _framecount[state] = frameCount;
     _src[state].x = x;
     _src[state].y = y;
     _src[state].w = w;
     _src[state].h = h;
-    _frametime = 1000.0 / (fps ? fps : 12);
 }
 
-void AnimatedSprite::Draw(Graphics *g, std::string state, SDL_FRect &dst, SDL_RendererFlip flip, float angle, SDL_FPoint *center) {
-    _currentframe %= _framecount[state];
-    SDL_Rect src = _src[state];
-    src.x += _currentframe * src.w;
-    g->DrawTexture(_texture, src, dst, center, angle, flip);
-    _elapsedtime += g->GetDeltaTime();
+void AnimatedSprite::Animate(float deltatime, std::string state) {
+    _elapsedtime += deltatime;
     if (_elapsedtime >= _frametime) {
         _elapsedtime = 0;
         _currentframe ++;
+		_currentframe %= _framecount[state];
     }
+}
+
+void AnimatedSprite::Draw(Graphics *g, std::string state, SDL_FRect &dst, SDL_RendererFlip flip, float angle, SDL_FPoint *center) {
+    SDL_Rect src = _src[state];
+    src.x += _currentframe * src.w;
+    g->DrawTexture(_texture, src, dst, center, angle, flip);
 }
 
 void AnimatedSprite::Draw(Graphics *g, std::string state, SDL_Rect &dst, SDL_RendererFlip flip, float angle, SDL_Point *center) {
     SDL_Rect src = _src[state];
     src.x += _currentframe * src.w;
     g->DrawTexture(_texture, src, dst, center, angle, flip);
-    _elapsedtime += g->GetDeltaTime();
-    if (_elapsedtime >= _frametime) {
-        _elapsedtime = 0;
-        _currentframe = (_currentframe + 1) % _framecount[state];
-    }
 }

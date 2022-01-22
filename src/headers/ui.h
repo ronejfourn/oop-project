@@ -7,7 +7,7 @@ typedef enum state {STATE_MENU, STATE_OPTIONS, STATE_ALIVE, STATE_DEAD} State;
 
 const int defaultSize = 18;
 const int defaultWidth = 14;
-const float fontRatio = 14 / 18.0;
+const float fontRatio = 14 / 18.0f;
 
 class UI{
     static UI *_instance;

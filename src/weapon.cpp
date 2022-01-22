@@ -3,6 +3,7 @@
 
 Weapon::Weapon() {
     _radius = 0;
+    _anchor = nullptr;
     _flip   = SDL_FLIP_NONE;
 }
 
@@ -19,7 +20,7 @@ void Weapon::Draw(Graphics *g, Vec2f offset) {
     an = _dir.y < 0 ? 270 + an : 90  - an;
     Vec2f rd = _dir * _radius;
     SDL_FPoint b = { // Placeholder
-        10.5, 37.5
+        7, 25
     };
     SDL_FRect dst = {
         a.x + rd.x - b.x - offset.x,

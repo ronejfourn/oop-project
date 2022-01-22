@@ -8,6 +8,9 @@
 
 SDL_Texture *singleTexture;
 
+const uint32_t FPS = 60;
+const float fixdt  = 1000.0f / FPS;
+
 int main(int argc, char *argv[]) {
     srand(0);
     srand(rand());
@@ -17,7 +20,7 @@ int main(int argc, char *argv[]) {
     uiInstance->LoadFont(graphicsInstance);
     uiInstance->SetState(STATE_MENU);
 
-    graphicsInstance->SetTargetFPS(60);
+    graphicsInstance->SetTargetFPS(FPS);
     graphicsInstance->SetTitle("Game", "../../res/icon.bmp");
 
     singleTexture = graphicsInstance->LoadImage("../../res/0x72_DungeonTilesetII_v1.4/0x72_DungeonTilesetII_v1.4.png");
@@ -47,11 +50,6 @@ int main(int argc, char *argv[]) {
         0, 0,
         tsize * 70,
         tsize * 32
-    };
-    SDL_FRect dmaprect = {
-        0, 0,
-        float(tsize * 3 * 70),
-        float(tsize * 3 * 32)
     };
 
     uint32_t *indices = new uint32_t [maprect.w / tsize * maprect.h / tsize];
@@ -116,10 +114,11 @@ int main(int argc, char *argv[]) {
             offset = cam.GetOffset();
         }
 
-        SDL_FRect dmaprect = {
-            -offset.x, -offset.y,
-            float(tsize * 3 * 70),
-            float(tsize * 3 * 32)
+        SDL_Rect dmaprect = {
+            static_cast<int>(-offset.x),
+            static_cast<int>(-offset.y),
+            maprect.w * 2,
+            maprect.h * 2
         };
 
         graphicsInstance->Clear();
