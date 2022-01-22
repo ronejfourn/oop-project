@@ -23,6 +23,7 @@ Graphics::Graphics() {
     _dbegin = 0;
 
 	SDL_SetHint(SDL_HINT_RENDER_DRIVER, "opengl");
+    SDL_SetHint(SDL_HINT_MOUSE_RELATIVE_SCALING, "1");
     _window = SDL_CreateWindow(
         "Unnamed Window",
         SDL_WINDOWPOS_UNDEFINED,
@@ -160,15 +161,9 @@ Vec2i Graphics::GetCurrentResolution() {
     return ret;
 }
 
-Vec2f Graphics::GetCursorPosition() {
-    Vec2i res;
-    res = GetCurrentResolution();
-    int mouse_x, mouse_y;
-    SDL_GetMouseState(&mouse_x, &mouse_y);
-    Vec2f ret = {
-        (mouse_x * float(_wdim.x ) / res.x),
-        (mouse_y * float(_wdim.y) / res.y)
-    };
+Vec2i Graphics::GetCursorPosition() {
+    Vec2i ret;
+    SDL_GetMouseState(&ret.x, &ret.y);
     return ret;
 }
 

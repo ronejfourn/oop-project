@@ -21,7 +21,7 @@ public:
     void Update();
 
     Vec2i GetCurrentResolution();
-    Vec2f GetCursorPosition();
+    Vec2i GetCursorPosition();
 
     void SetTitle(const char *title, const char *icon_file = nullptr);
     void SetTargetFPS(uint32_t fps);

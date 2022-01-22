@@ -171,18 +171,16 @@
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="src\animated_sprite.h" />
-    <ClInclude Include="src\entity.h" />
-    <ClInclude Include="src\graphics.h" />
+    <ClInclude Include="src\headers\animated_sprite.h" />
     <ClInclude Include="src\headers\camera.h" />
+    <ClInclude Include="src\headers\entity.h" />
+    <ClInclude Include="src\headers\graphics.h" />
+    <ClInclude Include="src\headers\input.h" />
+    <ClInclude Include="src\headers\player.h" />
+    <ClInclude Include="src\headers\sprite.h" />
     <ClInclude Include="src\headers\ui.h" />
     <ClInclude Include="src\headers\utils.h" />
     <ClInclude Include="src\headers\weapon.h" />
-    <ClInclude Include="src\input.h" />
-    <ClInclude Include="src\logger.h" />
-    <ClInclude Include="src\player.h" />
-    <ClInclude Include="src\sprite.h" />
-    <ClInclude Include="src\tilemap.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\animated_sprite.cpp" />
@@ -193,7 +191,6 @@
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\player.cpp" />
     <ClCompile Include="src\sprite.cpp" />
-    <ClCompile Include="src\tilemap.cpp" />
     <ClCompile Include="src\ui.cpp" />
     <ClCompile Include="src\weapon.cpp" />
   </ItemGroup>

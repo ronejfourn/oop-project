@@ -19,7 +19,11 @@ Camera::Camera(Entity *anchor, Recti area) {
 }
 
 Vec2f Camera::GetCursorPosition() {
-    return _ginstance->GetCursorPosition() + _offset;
+    Vec2i mouse = _ginstance->GetCursorPosition();
+    return  {
+        mouse.x + _offset.x,
+        mouse.y + _offset.y,
+    };
 }
 
 Vec2f Camera::GetOffset() {
