@@ -81,7 +81,7 @@ void UI::DisplayText(Graphics *g, std::string msg, SDL_Rect dst, uint16_t ftSize
     chrDst.h = dst.h < ftSize ? dst.h : ftSize;
     chrDst.w = fontRatio * chrDst.h;
 
-    if((dst.h / chrDst.h) * (dst.w / float(chrDst.w)) < txtSize){
+    if((dst.h / float(chrDst.h)) * (dst.w / float(chrDst.w)) < txtSize){
         Logger::LogWarning(("Following message does not fit in the box. Characters will be squished: " + msg).c_str());
         chrDst.w = ((dst.h / chrDst.h) * dst.w) / msg.size();
     }
@@ -119,7 +119,7 @@ void UI::DisplayInfo(Graphics *g, Player &p){
 }
 
 void UI::DrawMenu(Graphics *g){
-    Vec2i windowSize = g->GetCurrentResolution();
+    Vec2i windowSize = g->GetLogicalResolution();
     SDL_Rect menuBox = {0, 0, windowSize.x / 4, windowSize.y / 4};
     menuBox.x = (windowSize.x - menuBox.w) / 2;
     menuBox.y = (windowSize.y - menuBox.h) / 2;
@@ -133,7 +133,7 @@ void UI::DrawMenu(Graphics *g){
 }
 
 void UI::DrawOptions(Graphics *g){
-    Vec2i windowSize = g->GetCurrentResolution();
+    Vec2i windowSize = g->GetLogicalResolution();
     SDL_Rect optionsBox = {0, 0, windowSize.x / 4, windowSize.y / 4};
     optionsBox.x = (windowSize.x - optionsBox.w) / 2;
     optionsBox.y = (windowSize.y - optionsBox.h) / 2;

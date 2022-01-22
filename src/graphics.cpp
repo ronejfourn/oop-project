@@ -23,7 +23,6 @@ Graphics::Graphics() {
     _dbegin = 0;
 
 	SDL_SetHint(SDL_HINT_RENDER_DRIVER, "opengl");
-    SDL_SetHint(SDL_HINT_MOUSE_RELATIVE_SCALING, "1");
     _window = SDL_CreateWindow(
         "Unnamed Window",
         SDL_WINDOWPOS_UNDEFINED,
@@ -154,16 +153,19 @@ void Graphics::DrawTexture(SDL_Texture *texture, SDL_Rect &src, SDL_FRect &dst, 
 
 float Graphics::GetDeltaTime() {return _dt;}
 
+Vec2i Graphics::GetLogicalResolution() {return _wdim;}
+
 Vec2i Graphics::GetCurrentResolution() {
     Vec2i ret;
     SDL_GetWindowSize(_window, &ret.x, &ret.y);
     return ret;
 }
 
-Vec2i Graphics::GetCursorPosition() {
-    Vec2i ret;
-    SDL_GetMouseState(&ret.x, &ret.y);
-    return ret;
+Vec2f Graphics::GetCursorPosition() {
+    Vec2i mouse, res;
+    SDL_GetMouseState(&mouse.x, &mouse.y);
+    SDL_GetMouseState(&res.x  , &res.y  );
+    return {mouse.x / float(res.x), mouse.y / float(res.y)};
 }
 
 /*
