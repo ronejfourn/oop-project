@@ -1,5 +1,5 @@
 #include "headers/player.h"
-#include "headers/weapon.h"
+#include "headers/melee.h"
 
 extern SDL_Texture *singleTexture;
 
@@ -11,7 +11,7 @@ namespace {
 }
 
 Player::Player() : Entity() {
-    _weapon  = new Weapon(singleTexture, this, 20);
+    _weapon  = new Melee(this, 25, "regular_sword");
     _state   = "idle";
     _box.dim = {p_width, p_height};
     _hp = 100;
@@ -41,8 +41,10 @@ void Player::FaceTowards(Vec2f pos) {
 }
 
 void Player::Update(float deltatime) {
-    if (_state != "hurt")
+    if (_state != "hurt") {
         Move(deltatime);
+        _weapon->Update(deltatime);
+    }
 
     if (_state == "hurt") {
         _htime += deltatime;
@@ -59,6 +61,7 @@ void Player::Update(float deltatime) {
 }
 
 void Player::Draw(Graphics *g, Vec2f offset) {
+    _weapon->Draw(g, offset);
     SDL_FRect dst = {
         _box.pos.x - offset.x,
         _box.pos.y - offset.y,
@@ -74,5 +77,8 @@ void Player::Draw(Graphics *g, Vec2f offset) {
     } else {
         _sprite.Draw(g, _state, dst, _flip);
     }
-    _weapon->Draw(g, offset);
+}
+
+void Player::Attack() {
+    _weapon->Attack();
 }

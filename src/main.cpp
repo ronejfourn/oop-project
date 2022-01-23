@@ -76,16 +76,16 @@ int main(int argc, char *argv[]) {
     graphicsInstance->BindTexture(NULL);
     delete []indices;
 
-    Vec2f ini, pcur, offset(0, 0);
-    ini = player.GetCenter();
+    Vec2f offset;
 
     Input *inputInstance = Input::GetInstance();
     inputInstance->BindActionToKey(SDL_SCANCODE_W, std::bind(&Player::MoveUp   , &player), true);
     inputInstance->BindActionToKey(SDL_SCANCODE_A, std::bind(&Player::MoveLeft , &player), true);
     inputInstance->BindActionToKey(SDL_SCANCODE_S, std::bind(&Player::MoveDown , &player), true);
     inputInstance->BindActionToKey(SDL_SCANCODE_D, std::bind(&Player::MoveRight, &player), true);
+    inputInstance->BindActionToBtn(0, std::bind(&Player::Attack, &player), false);
     inputInstance->BindActionToKey(SDL_SCANCODE_DOWN, std::bind(&UI::ChangeOption, uiInstance, false), false);
-    inputInstance->BindActionToKey(SDL_SCANCODE_UP,   std::bind(&UI::ChangeOption, uiInstance, true),  false);
+    inputInstance->BindActionToKey(SDL_SCANCODE_UP  , std::bind(&UI::ChangeOption, uiInstance, true ), false);
     inputInstance->BindActionToKey(SDL_SCANCODE_RETURN, std::bind(&UI::ChooseOption, uiInstance), false);
 
     Camera cam(&player, {0, 0, 1280, 720});
@@ -107,10 +107,10 @@ int main(int argc, char *argv[]) {
         inputInstance->Handle();
 
         if(uiInstance->GetCurrentState() == STATE_ALIVE){
-            mouse = cam.GetCursorPosition();
-            player.FaceTowards(mouse);
             player.Update(graphicsInstance->GetDeltaTime());
             cam.Update();
+            mouse = cam.GetCursorPosition();
+            player.FaceTowards(mouse);
             offset = cam.GetOffset();
         }
 
