@@ -3,6 +3,23 @@
 
 class Entity;
 
+enum class Weapons {
+    knife,
+    regular_sword,
+    red_gem_sword,
+    hammer,
+    baton_with_spikes,
+    mace,
+    katana,
+    saw_sword,
+    axe,
+    machete,
+    cleaver,
+    knight_sword,
+    red_magic_staff,
+    bow
+};
+
 class Weapon {
 protected:
     Sprite _sprite;
@@ -13,8 +30,8 @@ protected:
     SDL_RendererFlip _flip;
 public:
     Weapon();
-    Weapon(Entity * holder, float rad, std::string name = "");
-    void Switch(std::string newweap);
+    Weapon(Entity * holder, float rad, Weapons name = Weapons::knife);
+    void Switch(Weapons newweap);
     virtual void Draw(Graphics *g, Vec2f offset);
     virtual void Attack() = 0;
     virtual void Update(float deltatime) = 0;

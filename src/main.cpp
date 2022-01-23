@@ -3,7 +3,6 @@
 #include "headers/weapon.h"
 #include "headers/ui.h"
 #include "headers/camera.h"
-#include <vector>
 #include <SDL2/SDL.h>
 
 SDL_Texture *singleTexture;

@@ -11,7 +11,7 @@ namespace {
 }
 
 Player::Player() : Entity() {
-    _weapon  = new Melee(this, 25, "regular_sword");
+    _weapon  = new Melee(this, 25, Weapons::red_gem_sword);
     _state   = EntityState::Idle;
     _box.dim = {p_width, p_height};
     _hp = 100;

@@ -14,7 +14,7 @@ Melee::Melee()
         _htime = {30000, 0};
     }
 
-Melee::Melee(Entity * holder, float rad, std::string name)
+Melee::Melee(Entity * holder, float rad, Weapons name)
 	: Weapon(holder, rad, name) {
         _isattacking = false;
         _isonhold    = false;
@@ -64,7 +64,7 @@ void Melee::PointTowards(Vec2f target) {
 void Melee::Update(float deltatime) {
 	if (_isattacking) {
         Vec2f cen = _anchor->GetCenter();
-        float ang = 4 / 3 * pi * deltatime / _atime.x;
+        float ang = 9 / 5 * pi * deltatime / _atime.x;
         float ca = cos(ang), sa = sin(ang);
         Vec2f tmp = _dir;
         if (_facingright) {
