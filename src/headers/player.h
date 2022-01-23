@@ -12,4 +12,5 @@ public:
     void Draw(Graphics *g, Vec2f offset) override;
     void TakeDamage(float damage) override;
     void FaceTowards(Vec2f pos) override;
+    void Attack();
 };

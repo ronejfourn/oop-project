@@ -3,7 +3,7 @@
 AnimatedSprite::AnimatedSprite() {
     _currentframe = 0;
     _elapsedtime  = 0;
-    _frametime    = 1000.0 / 12;
+    _frametime    = 1000.0f / 12;
 }
 
 AnimatedSprite::~AnimatedSprite() {
@@ -19,14 +19,14 @@ AnimatedSprite::AnimatedSprite(Graphics *g, std::string file_path) : AnimatedSpr
 }
 
 uint32_t AnimatedSprite::GetFPS() {
-    return _frametime * 1000;
+    return uint32_t(_frametime) * 1000;
 }
 
 void AnimatedSprite::SetFPS(uint32_t fps) {
-    _frametime = fps ? 1000.0 / fps : _frametime;
+    _frametime = fps ? 1000.0f / fps : _frametime;
 }
 
-void AnimatedSprite::AddAnimation(std::string state, int x, int y, int w, int h, uint32_t frameCount) {
+void AnimatedSprite::AddAnimation(uint32_t state, int x, int y, int w, int h, uint32_t frameCount) {
     _framecount[state] = frameCount;
     _src[state].x = x;
     _src[state].y = y;
@@ -34,7 +34,7 @@ void AnimatedSprite::AddAnimation(std::string state, int x, int y, int w, int h,
     _src[state].h = h;
 }
 
-void AnimatedSprite::Animate(float deltatime, std::string state) {
+void AnimatedSprite::Animate(float deltatime, uint32_t state) {
     _elapsedtime += deltatime;
     if (_elapsedtime >= _frametime) {
         _elapsedtime = 0;
@@ -43,14 +43,19 @@ void AnimatedSprite::Animate(float deltatime, std::string state) {
     }
 }
 
-void AnimatedSprite::Draw(Graphics *g, std::string state, SDL_FRect &dst, SDL_RendererFlip flip, float angle, SDL_FPoint *center) {
+void AnimatedSprite::Draw(Graphics *g, uint32_t state, SDL_FRect &dst, SDL_RendererFlip flip, float angle, SDL_FPoint *center) {
     SDL_Rect src = _src[state];
     src.x += _currentframe * src.w;
     g->DrawTexture(_texture, src, dst, center, angle, flip);
 }
 
-void AnimatedSprite::Draw(Graphics *g, std::string state, SDL_Rect &dst, SDL_RendererFlip flip, float angle, SDL_Point *center) {
+void AnimatedSprite::Draw(Graphics *g, uint32_t state, SDL_Rect &dst, SDL_RendererFlip flip, float angle, SDL_Point *center) {
     SDL_Rect src = _src[state];
     src.x += _currentframe * src.w;
     g->DrawTexture(_texture, src, dst, center, angle, flip);
+}
+
+void AnimatedSprite::InitBuffer(uint32_t count) {
+    _src = new SDL_Rect[count];
+    _framecount = new uint32_t[count];
 }

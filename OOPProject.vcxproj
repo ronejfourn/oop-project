@@ -176,6 +176,7 @@
     <ClInclude Include="src\headers\entity.h" />
     <ClInclude Include="src\headers\graphics.h" />
     <ClInclude Include="src\headers\input.h" />
+    <ClInclude Include="src\headers\melee.h" />
     <ClInclude Include="src\headers\player.h" />
     <ClInclude Include="src\headers\sprite.h" />
     <ClInclude Include="src\headers\ui.h" />
@@ -189,6 +190,7 @@
     <ClCompile Include="src\graphics.cpp" />
     <ClCompile Include="src\input.cpp" />
     <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\melee.cpp" />
     <ClCompile Include="src\player.cpp" />
     <ClCompile Include="src\sprite.cpp" />
     <ClCompile Include="src\ui.cpp" />

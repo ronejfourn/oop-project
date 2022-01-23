@@ -2,9 +2,16 @@
 #include "animated_sprite.h"
 #include "utils.h"
 
+enum class EntityState {
+    Idle,
+    Run,
+    Hurt,
+    _count
+};
+
 class Entity {
 protected:
-    std::string     _state;
+    EntityState _state;
     SDL_RendererFlip _flip;
     Rectf _box;
     AnimatedSprite _sprite;
