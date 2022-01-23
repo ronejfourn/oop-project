@@ -3,7 +3,7 @@
 AnimatedSprite::AnimatedSprite() {
     _currentframe = 0;
     _elapsedtime  = 0;
-    _frametime    = 1000.0 / 12;
+    _frametime    = 1000.0f / 12;
 }
 
 AnimatedSprite::~AnimatedSprite() {
@@ -19,11 +19,11 @@ AnimatedSprite::AnimatedSprite(Graphics *g, std::string file_path) : AnimatedSpr
 }
 
 uint32_t AnimatedSprite::GetFPS() {
-    return _frametime * 1000;
+    return uint32_t(_frametime) * 1000;
 }
 
 void AnimatedSprite::SetFPS(uint32_t fps) {
-    _frametime = fps ? 1000.0 / fps : _frametime;
+    _frametime = fps ? 1000.0f / fps : _frametime;
 }
 
 void AnimatedSprite::AddAnimation(std::string state, int x, int y, int w, int h, uint32_t frameCount) {

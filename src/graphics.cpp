@@ -18,8 +18,8 @@ Graphics *Graphics::GetInstance() {
 Graphics::Graphics() {
     _wdim = {1280, 720};
 
-    _dt = 1000.0 / 60;
-    _ft = 1000.0 / 60;
+    _dt = 1000.0f / 60;
+    _ft = 1000.0f / 60;
     _dbegin = 0;
 
 	SDL_SetHint(SDL_HINT_RENDER_DRIVER, "opengl");
@@ -80,7 +80,7 @@ void Graphics::SetTargetFPS(uint32_t fps) {
         Logger::LogWarning("FPS cannot be zero");
         fps = 60;
     }
-    _ft = 1000.0 / fps;
+    _ft = 1000.0f / fps;
 }
 
 void Graphics::DrawRect(float tl_x, float tl_y, float width, float height, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
@@ -164,8 +164,11 @@ Vec2i Graphics::GetCurrentResolution() {
 Vec2f Graphics::GetCursorPosition() {
     Vec2i mouse, res;
     SDL_GetMouseState(&mouse.x, &mouse.y);
-    SDL_GetMouseState(&res.x  , &res.y  );
-    return {mouse.x / float(res.x), mouse.y / float(res.y)};
+    res = GetCurrentResolution();
+    return {
+        mouse.x * _wdim.x / float(res.x),
+        mouse.y * _wdim.y / float(res.y)
+    };
 }
 
 /*
