@@ -22,9 +22,9 @@ void Input::BindActionToKey(SDL_Scancode key, const std::function<void()>& actio
     hold ? _keyDown[key].v |= isHeld : _keyDown[key].v &= ~isHeld;
 }
 
-void Input::BindActionToBtn(int btn, const std::function<void(int, int)>& action, bool hold) {
-    _btnBind[btn] = action;
-    hold ? _btnDown[btn].v |= isHeld : _btnDown[btn].v &= ~isHeld;
+void Input::BindActionToBtn(MouseButton btn, const std::function<void(int, int)>& action, bool hold) {
+    _btnBind[int(btn)] = action;
+    hold ? _btnDown[int(btn)].v |= isHeld : _btnDown[int(btn)].v &= ~isHeld;
 }
 
 void Input::Handle() {

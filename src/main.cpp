@@ -83,7 +83,7 @@ int main(int argc, char *argv[]) {
     inputInstance->BindActionToKey(SDL_SCANCODE_A, std::bind(&Player::MoveLeft , &player), true);
     inputInstance->BindActionToKey(SDL_SCANCODE_S, std::bind(&Player::MoveDown , &player), true);
     inputInstance->BindActionToKey(SDL_SCANCODE_D, std::bind(&Player::MoveRight, &player), true);
-    inputInstance->BindActionToBtn(0, std::bind(&Player::Attack, &player), false);
+    inputInstance->BindActionToBtn(MouseButton::Left, std::bind(&Player::Attack, &player), false);
     inputInstance->BindActionToKey(SDL_SCANCODE_DOWN, std::bind(&UI::ChangeOption, uiInstance, false), false);
     inputInstance->BindActionToKey(SDL_SCANCODE_UP  , std::bind(&UI::ChangeOption, uiInstance, true ), false);
     inputInstance->BindActionToKey(SDL_SCANCODE_RETURN, std::bind(&UI::ChooseOption, uiInstance), false);
@@ -114,8 +114,8 @@ int main(int argc, char *argv[]) {
         }
 
         SDL_Rect dmaprect = {
-            static_cast<int>(-offset.x),
-            static_cast<int>(-offset.y),
+            round(-offset.x),
+            round(-offset.y),
             maprect.w * 2,
             maprect.h * 2
         };

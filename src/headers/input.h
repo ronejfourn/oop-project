@@ -3,6 +3,10 @@
 #include <map>
 #include <functional>
 
+enum class MouseButton {
+    Left, Middle, Right
+};
+
 class Input {
     static Input *_instance;
 private:
@@ -17,7 +21,7 @@ public:
     static Input *GetInstance();
 
     void BindActionToKey(SDL_Scancode key, const std::function<void()>& action, bool hold);
-    void BindActionToBtn(int btn, const std::function<void(int, int)>& action, bool hold);
+    void BindActionToBtn(MouseButton  btn, const std::function<void(int, int)>& action, bool hold);
 
     void Handle();
     void ClearBinds();
