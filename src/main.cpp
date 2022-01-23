@@ -18,7 +18,7 @@ int main(int argc, char *argv[]) {
     Graphics *graphicsInstance = Graphics::GetInstance();
     UI *uiInstance = UI::GetInstance();
     uiInstance->LoadFont(graphicsInstance);
-    uiInstance->SetState(STATE_MENU);
+    uiInstance->SetState(GameState::MENU);
 
     graphicsInstance->SetTargetFPS(FPS);
     graphicsInstance->SetTitle("Game", "../../res/icon.bmp");
@@ -105,7 +105,7 @@ int main(int argc, char *argv[]) {
         }
         inputInstance->Handle();
 
-        if(uiInstance->GetCurrentState() == STATE_ALIVE){
+        if(uiInstance->GetCurrentState() == GameState::ALIVE){
             player.Update(graphicsInstance->GetDeltaTime());
             cam.Update();
             mouse = cam.GetCursorPosition();
@@ -122,7 +122,7 @@ int main(int argc, char *argv[]) {
 
         graphicsInstance->Clear();
         graphicsInstance->DrawTexture(map, maprect, dmaprect);
-        if(uiInstance->GetCurrentState() == STATE_ALIVE)
+        if(uiInstance->GetCurrentState() == GameState::ALIVE)
             cam.Render(player);
         uiInstance->Draw(graphicsInstance, player);
 

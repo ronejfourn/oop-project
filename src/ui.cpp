@@ -5,11 +5,11 @@ extern SDL_Texture *singleTexture;
 
 UI *UI::_instance = nullptr;
 
-std::string menuItems[3] = {"Play", "Options", "Exit"};
-std::string optionsItems[] = {"Back"};
+std::string menuItems[] = {"Play", "Options", "Exit"};
+std::string optionsItems[] = {"Back", "Something"};
 
 UI::UI(){
-    _currentState = STATE_MENU;
+    _currentState = GameState::MENU;
 }
 
 UI *UI::GetInstance(){
@@ -23,23 +23,23 @@ void UI::LoadFont(Graphics *g) {
     _fontTexture = g->LoadImage("../../res/font.png");
 }
 
-State UI::GetCurrentState(){
+GameState UI::GetCurrentState(){
     return _currentState;
 }
 
-void UI::SetState(State state){
+void UI::SetState(GameState state){
     _currentState = state;
-    if(_currentState == STATE_MENU)
+    if(_currentState == GameState::MENU)
         _selectedOptionIndex = 0;
-    if(_currentState == STATE_OPTIONS)
+    if(_currentState == GameState::OPTIONS)
         _selectedOptionIndex = 0;
 }
 
 void UI::ChangeOption(bool up){
     uint8_t max;
-    if(_currentState == STATE_MENU)
+    if(_currentState == GameState::MENU)
         max = 2;
-    else if(_currentState == STATE_OPTIONS)
+    else if(_currentState == GameState::OPTIONS)
         max = 1;
     if(up)
         _selectedOptionIndex = _selectedOptionIndex ? _selectedOptionIndex - 1 : max;
@@ -48,20 +48,20 @@ void UI::ChangeOption(bool up){
 }
 
 void UI::ChooseOption(){
-    if(_currentState == STATE_MENU){
+    if(_currentState == GameState::MENU){
         if(_selectedOptionIndex == 0)
-            SetState(STATE_ALIVE);
+            SetState(GameState::ALIVE);
         else if(_selectedOptionIndex == 1)
-            SetState(STATE_OPTIONS);
+            SetState(GameState::OPTIONS);
         else if(_selectedOptionIndex == 2){
             SDL_Event e;
             e.type = SDL_QUIT;
             SDL_PushEvent(&e);
         }
     }
-    else if(_currentState == STATE_OPTIONS){
+    else if(_currentState == GameState::OPTIONS){
         if(_selectedOptionIndex == 0)
-            SetState(STATE_MENU);
+            SetState(GameState::MENU);
     }
 }
 
@@ -78,6 +78,8 @@ void UI::DisplayText(Graphics *g, std::string msg, SDL_Rect dst, uint16_t ftSize
     uint16_t txtSize = msg.size();
 
     SDL_Rect chrDst;
+    chrDst.x = dst.x;
+    chrDst.y = dst.y;
     chrDst.h = dst.h < ftSize ? dst.h : ftSize;
     chrDst.w = fontRatio * chrDst.h;
 
@@ -86,13 +88,9 @@ void UI::DisplayText(Graphics *g, std::string msg, SDL_Rect dst, uint16_t ftSize
         chrDst.w = ((dst.h / chrDst.h) * dst.w) / msg.size();
     }
 
-    chrDst.x = dst.x;
-    chrDst.y = dst.y;
-
-    int i = 0;
-    if((txtSize - i) * chrDst.w < dst.w)
-        chrDst.x += (dst.w - ((txtSize - i) * chrDst.w)) / 2;
-    for(; i < txtSize; i++){
+    if(txtSize * chrDst.w < dst.w)
+        chrDst.x += (dst.w - (txtSize * chrDst.w)) / 2;
+    for(int i = 0; i < txtSize; i++){
         if(chrDst.x >= dst.x + dst.w){
             chrDst.y += chrDst.h;
             chrDst.x = dst.x;
@@ -137,20 +135,20 @@ void UI::DrawOptions(Graphics *g){
     SDL_Rect optionsBox = {0, 0, windowSize.x / 4, windowSize.y / 4};
     optionsBox.x = (windowSize.x - optionsBox.w) / 2;
     optionsBox.y = (windowSize.y - optionsBox.h) / 2;
-    optionsBox.h /= 3;
+    optionsBox.h /= 2;
 
     uint16_t ftSize = 28;
     for(const auto &i : optionsItems){
-        DisplayText(g, i, optionsBox, i == menuItems[_selectedOptionIndex] ? 35 : ftSize);
+        DisplayText(g, i, optionsBox, i == optionsItems[_selectedOptionIndex] ? 35 : ftSize);
         optionsBox.y += optionsBox.h;
     }
 }
 
 void UI::Draw(Graphics *g, Player &p){
-    if(_currentState == STATE_ALIVE)
+    if(_currentState == GameState::ALIVE)
         DisplayInfo(g, p);
-    else if(_currentState == STATE_MENU)
+    else if(_currentState == GameState::MENU)
         DrawMenu(g);
-    else if(_currentState == STATE_OPTIONS)
+    else if(_currentState == GameState::OPTIONS)
         DrawOptions(g);
 }

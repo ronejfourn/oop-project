@@ -3,7 +3,7 @@
 #include "player.h"
 #include <string>
 
-enum State {STATE_MENU, STATE_OPTIONS, STATE_ALIVE, STATE_DEAD};
+enum class GameState {MENU, OPTIONS, ALIVE, DEAD};
 
 const int defaultSize = 18;
 const int defaultWidth = 14;
@@ -14,15 +14,15 @@ class UI{
 private:
     uint8_t _selectedOptionIndex;
     SDL_Texture *_fontTexture;
-    State _currentState;
+    GameState _currentState;
     UI();
 public:
     static UI *GetInstance();
     ~UI();
 
-    void SetState(State state);
+    void SetState(GameState state);
     void LoadFont(Graphics *g);
-    State GetCurrentState();
+    GameState GetCurrentState();
 
     void ChangeOption(bool up);
     void ChooseOption();
