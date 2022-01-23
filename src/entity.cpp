@@ -5,11 +5,12 @@ Entity::Entity() {
     _hp = 0.0f;
     _alive = true;
     _flip  = SDL_FLIP_NONE;
-    _recovertime = 100;
+    _recovertime = 250;
     _htime = 0;
     _accns = 0.003f;
     _maxspd = 0.5f;
     _maxdspd = _maxspd * Q_rsqrt(2);
+    _sprite.InitBuffer(uint32_t(EntityState::_count));
 }
 
 void Entity::MoveUp() {
@@ -35,7 +36,7 @@ void Entity::AddForce(Vec2f op, float deltatime) {
 
 void Entity::TakeDamage(float damage) {
     _hp -= damage;
-    _state = "hurt";
+    _state = EntityState::Hurt;
     if (_hp <= 0) {
         _alive = false;
     }
@@ -55,7 +56,7 @@ void Entity::Draw(Graphics *g, Vec2f offset) {
         _box.pos.y - offset.y,
         _box.dim.x, _box.dim.y
     };
-    _sprite.Draw(g, _state, tmp, _flip, true);
+    _sprite.Draw(g, uint32_t(_state), tmp, _flip, true);
 }
 
 void Entity::Move(float deltatime) {

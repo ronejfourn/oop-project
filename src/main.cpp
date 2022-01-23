@@ -25,20 +25,20 @@ int main(int argc, char *argv[]) {
 
     singleTexture = graphicsInstance->LoadImage("../../res/0x72_DungeonTilesetII_v1.4/0x72_DungeonTilesetII_v1.4.png");
     Player player(0, 0);
-    std::vector<Vec2i> tilemap;
-    tilemap.push_back({16, 64});
-    tilemap.push_back({32, 64});
-    tilemap.push_back({48, 64});
-    tilemap.push_back({16, 80});
-    tilemap.push_back({32, 80});
-    tilemap.push_back({48, 80});
-    tilemap.push_back({16, 96});
-    tilemap.push_back({32, 96});
+    Vec2i tilemap[] = {
+        {16, 64},
+        {32, 64},
+        {48, 64},
+        {16, 80},
+        {32, 80},
+        {48, 80},
+        {16, 96},
+        {32, 96},
+    };
     Vec2f mouse;
 
     SDL_Event e;
 
-    std::map<SDL_Scancode, bool> key_held;
 
     int tsize = 16;
     SDL_Rect tile = {
@@ -92,17 +92,16 @@ int main(int argc, char *argv[]) {
 
     while(1) {
         while(SDL_PollEvent(&e)) {
-            if (e.type == SDL_QUIT) {
+            if (e.type == SDL_QUIT)
                 return 0;
-            } else if (e.type == SDL_KEYDOWN) {
+            else if (e.type == SDL_KEYDOWN)
                 inputInstance->KeyDown(e.key.keysym.scancode);
-            } else if (e.type == SDL_KEYUP) {
+            else if (e.type == SDL_KEYUP)
                 inputInstance->KeyUp(e.key.keysym.scancode);
-            } else if (e.type == SDL_MOUSEBUTTONDOWN) {
+            else if (e.type == SDL_MOUSEBUTTONDOWN)
                 inputInstance->BtnDown(e.button.button, e.button.x, e.button.y);
-            } else if (e.type == SDL_MOUSEBUTTONUP) {
+            else if (e.type == SDL_MOUSEBUTTONUP)
                 inputInstance->BtnUp(e.button.button);
-            }
         }
         inputInstance->Handle();
 

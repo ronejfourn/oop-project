@@ -6,7 +6,7 @@
 class Sprite {
 protected:
     SDL_Texture *_texture;
-    std::map<std::string, SDL_Rect>_src;
+    SDL_Rect *_src;
 public:
     Sprite();
     Sprite(SDL_Texture *texture);
@@ -18,8 +18,9 @@ public:
 
     SDL_Texture *GetTexture();
 
-    void AddState(std::string state, int x, int y, int w, int h);
+    void AddFrame(uint32_t state, int x, int y, int w, int h);
 
-    virtual void Draw(Graphics *g, std::string state, SDL_FRect &dst, SDL_RendererFlip flip, float angle = 0, SDL_FPoint *center = NULL);
-    virtual void Draw(Graphics *g, std::string state, SDL_Rect  &dst, SDL_RendererFlip flip, float angle = 0, SDL_Point  *center = NULL);
+    virtual void InitBuffer(uint32_t count);
+    virtual void Draw(Graphics *g, uint32_t state, SDL_FRect &dst, SDL_RendererFlip flip, float angle = 0, SDL_FPoint *center = NULL);
+    virtual void Draw(Graphics *g, uint32_t state, SDL_Rect  &dst, SDL_RendererFlip flip, float angle = 0, SDL_Point  *center = NULL);
 };

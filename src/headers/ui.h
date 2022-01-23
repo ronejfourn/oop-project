@@ -3,7 +3,7 @@
 #include "player.h"
 #include <string>
 
-typedef enum state {STATE_MENU, STATE_OPTIONS, STATE_ALIVE, STATE_DEAD} State;
+enum State {STATE_MENU, STATE_OPTIONS, STATE_ALIVE, STATE_DEAD};
 
 const int defaultSize = 18;
 const int defaultWidth = 14;
