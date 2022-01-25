@@ -15,4 +15,5 @@ public:
     void Update(float deltatime) override;
     void PointTowards(Vec2f target) override;
     void Draw(Graphics *g, Vec2f offset) override;
+    virtual bool Collision (Entity *) override {return false;}
 };

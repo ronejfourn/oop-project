@@ -187,6 +187,7 @@
   <ItemGroup>
     <ClCompile Include="src\animated_sprite.cpp" />
     <ClCompile Include="src\camera.cpp" />
+    <ClCompile Include="src\collision.cpp" />
     <ClCompile Include="src\entity.cpp" />
     <ClCompile Include="src\graphics.cpp" />
     <ClCompile Include="src\input.cpp" />
