@@ -1,5 +1,6 @@
 #include "headers/graphics.h"
 #include "SDL2/SDL_hints.h"
+#include "SDL2/SDL_render.h"
 #include "SDL2/SDL_timer.h"
 #include "SDL2/SDL_mouse.h"
 #define STB_IMAGE_IMPLEMENTATION
@@ -223,4 +224,34 @@ SDL_Texture *Graphics::CreateTexture(int width, int height) {
 
 void Graphics::BindTexture(SDL_Texture *texture) {
     SDL_SetRenderTarget(_renderer, texture);
+}
+
+void __circleHelper(SDL_Renderer *renderer, float xc, float yc, float x, float y) {
+    SDL_RenderDrawPointF(renderer, xc+x, yc+y);
+    SDL_RenderDrawPointF(renderer, xc-x, yc+y);
+    SDL_RenderDrawPointF(renderer, xc+x, yc-y);
+    SDL_RenderDrawPointF(renderer, xc-x, yc-y);
+    SDL_RenderDrawPointF(renderer, xc+y, yc+x);
+    SDL_RenderDrawPointF(renderer, xc-y, yc+x);
+    SDL_RenderDrawPointF(renderer, xc+y, yc-x);
+    SDL_RenderDrawPointF(renderer, xc-y, yc-x);
+}
+
+void Graphics::DrawCircle(float cx, float cy, float radius, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
+    int x = 0, y = radius;
+    int d = 3 - 2 * radius;
+    SDL_SetRenderDrawColor(_renderer, r, g, b, a);
+    __circleHelper(_renderer, cx, cy, x, y);
+    while (y >= x) {
+        x++;
+        if (d > 0)
+            d += 4 * (x - (--y)) + 10;
+        else
+            d += 4 * x + 6;
+        __circleHelper(_renderer, cx, cy, x, y);
+    }
+}
+
+void Graphics::DrawCircle(Vec2f c, float radius, uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
+    DrawCircle(c.x, c.y, radius, r, g, b, a);
 }
