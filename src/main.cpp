@@ -80,6 +80,7 @@ int main(int argc, char *argv[]) {
 
         if(uiInstance->GetCurrentState() == GameState::ALIVE){
             player.Update(graphicsInstance->GetDeltaTime());
+            player.Collision(nullptr, map, graphicsInstance->GetDeltaTime());
             cam.Update();
             mouse = cam.GetCursorPosition();
             player.FaceTowards(mouse);

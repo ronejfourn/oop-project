@@ -13,4 +13,5 @@ public:
     void TakeDamage(float damage) override;
     void FaceTowards(Vec2f pos) override;
     void Attack();
+    void Collision(Entity *enemies, Map &map, float deltatime);
 };

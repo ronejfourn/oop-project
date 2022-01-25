@@ -36,4 +36,6 @@ public:
     virtual void Attack() = 0;
     virtual void Update(float deltatime) = 0;
     virtual void PointTowards(Vec2f target) = 0;
+    Rectf GetBox() {return _box;}
+    virtual bool Collision (Entity *) = 0;
 };

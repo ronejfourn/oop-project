@@ -1,5 +1,6 @@
 #include "headers/player.h"
 #include "headers/melee.h"
+#include "headers/collision.h"
 
 extern SDL_Texture *singleTexture;
 
@@ -11,7 +12,7 @@ namespace {
 }
 
 Player::Player() : Entity() {
-    _weapon  = new Melee(this, 25, Weapons::red_gem_sword);
+    _weapon  = new Melee(this, 25, Weapons::regular_sword);
     _state   = EntityState::Idle;
     _box.dim = {p_width, p_height};
     _hp = 100;
@@ -41,10 +42,8 @@ void Player::FaceTowards(Vec2f pos) {
 }
 
 void Player::Update(float deltatime) {
-    if (_state != EntityState::Hurt) {
-        Move(deltatime);
-        _weapon->Update(deltatime);
-    }
+    Move(deltatime);
+    _weapon->Update(deltatime);
 
     if (_state == EntityState::Hurt) {
         _htime += deltatime;
@@ -61,7 +60,10 @@ void Player::Update(float deltatime) {
 }
 
 void Player::Draw(Graphics *g, Vec2f offset) {
-    _weapon->Draw(g, offset);
+    Rectf b = _weapon->GetBox();
+    bool ontop = b.pos.y + b.dim.y / 2 > _box.pos.y + _box.dim.y / 2;
+    if (!ontop)
+        _weapon->Draw(g, offset);
     SDL_FRect dst = {
         _box.pos.x - offset.x,
         _box.pos.y - offset.y,
@@ -69,15 +71,46 @@ void Player::Draw(Graphics *g, Vec2f offset) {
     };
     if (_state == EntityState::Hurt) {
         dst.y -= 4;
-        SDL_SetTextureBlendMode(_sprite.GetTexture(), SDL_BLENDMODE_ADD);
-        SDL_SetTextureColorMod(_sprite.GetTexture(), 255, 255, 255);
+        SDL_SetTextureColorMod(_sprite.GetTexture(), 255, 0, 0);
         _sprite.Draw(g, uint32_t(_state), dst, _flip);
-        SDL_SetTextureBlendMode(_sprite.GetTexture(), SDL_BLENDMODE_BLEND);
+        SDL_SetTextureColorMod(_sprite.GetTexture(), 255, 255, 255);
     } else {
         _sprite.Draw(g, uint32_t(_state), dst, _flip);
     }
+    if (ontop)
+        _weapon->Draw(g, offset);
+    g->DrawRect(dst, 255, 0, 0);
 }
 
 void Player::Attack() {
     _weapon->Attack();
+}
+
+void Player::Collision(Entity *enemies, Map &map, float deltatime) {
+    Vec2f ppos  = _box.pos + _box.dim / 2;
+    Vec2i tl = {
+        (int(ppos.x) / map.drawsize - 1),
+        (int(ppos.y) / map.drawsize - 1),
+    };
+    _box.pos -= _vel * deltatime;
+    Vec2i len = {3, 3};
+    float ct;
+    Vec2f cp, cn;
+    Rectf wallrect;
+    wallrect.dim = {float(map.drawsize), float(map.drawsize)};
+    for (int x = tl.x < 0 ? 0 : tl.x; x < ((tl.x + 3) < map.dim.x ? (tl.x + 3) : map.dim.x); x ++) {
+    for (int y = 0; y < map.dim.y; y ++) {
+        if (map.indices[x * map.dim.y + y] > 0) continue;
+        wallrect.pos = {float(x * map.drawsize), float(y * map.drawsize)};
+        if (Collision::DynamicRectVsRect(&_box, _vel, &wallrect, cp, cn, ct, deltatime))
+			_vel += cn * Vec2f(ut_abs(_vel.x), ut_abs(_vel.y)) * (1 - ct);
+    }}
+    for (int y = tl.y < 0 ? 0 : tl.y; y < ((tl.y + 3) < map.dim.y ? (tl.y + 3) : map.dim.y); y ++) {
+    for (int x = 0; x < map.dim.x; x ++) {
+        if (map.indices[x * map.dim.y + y] > 0) continue;
+        wallrect.pos = {float(x * map.drawsize), float(y * map.drawsize)};
+        if (Collision::DynamicRectVsRect(&_box, _vel, &wallrect, cp, cn, ct, deltatime))
+			_vel += cn * Vec2f(ut_abs(_vel.x), ut_abs(_vel.y)) * (1 - ct);
+    }}
+    _box.pos += _vel * deltatime;
 }

@@ -7,8 +7,8 @@ Entity::Entity() {
     _flip  = SDL_FLIP_NONE;
     _recovertime = 250;
     _htime = 0;
-    _accns = 0.003f;
-    _maxspd = 0.5f;
+    _accns = 0.002f;
+    _maxspd = 0.4f;
     _maxdspd = _maxspd * Q_rsqrt(2);
     _sprite.InitBuffer(uint32_t(EntityState::_count));
 }
@@ -29,9 +29,9 @@ void Entity::MoveRight() {
     _accn.x = +_accns;
 }
 
-void Entity::AddForce(Vec2f op, float deltatime) {
+void Entity::AddForce(Vec2f op) {
     _limit_speed = false;
-    _accn += op * deltatime;
+    _accn += op;
 }
 
 void Entity::TakeDamage(float damage) {
@@ -63,7 +63,7 @@ void Entity::Move(float deltatime) {
     _vel += _accn * deltatime;
     _accn.zero();
 
-    float friction = 0.002f * deltatime;
+    float friction = 0.0015f * deltatime;
     if (_vel.x != 0) {
         int sx = _vel.x < 0 ? -1 : 1;
         _vel.x -= friction > sx * _vel.x ? _vel.x : sx * friction;

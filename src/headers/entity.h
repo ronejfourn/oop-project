@@ -25,10 +25,11 @@ protected:
 public:
     Entity();
 
-    void AddForce(Vec2f op, float deltatime);
+    void AddForce(Vec2f op);
 
     Vec2f GetCenter();
     float GetHp() {return _hp;}
+    Rectf GetBox() {return _box;}
 
     void MoveUp   ();
     void MoveLeft ();
