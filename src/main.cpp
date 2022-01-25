@@ -12,7 +12,6 @@ const float fixdt  = 1000.0f / FPS;
 
 int main(int argc, char *argv[]) {
     srand(0);
-    srand(rand());
     SDL_Init(SDL_INIT_EVERYTHING);
     Graphics *graphicsInstance = Graphics::GetInstance();
     UI *uiInstance = UI::GetInstance();
@@ -23,65 +22,40 @@ int main(int argc, char *argv[]) {
     graphicsInstance->SetTitle("Game", "../../res/icon.bmp");
 
     singleTexture = graphicsInstance->LoadImage("../../res/0x72_DungeonTilesetII_v1.4/0x72_DungeonTilesetII_v1.4.png");
-    Player player(0, 0);
-    Vec2i tilemap[] = {
-        {16, 64},
-        {32, 64},
-        {48, 64},
-        {16, 80},
-        {32, 80},
-        {48, 80},
-        {16, 96},
-        {32, 96},
-    };
+    Player player(100, 100);
+    Map map;
+    map.texture = singleTexture;
+    map.tilemap = new Vec2i[8];
+    map.tilemap[0] = {16, 64};
+    map.tilemap[1] = {32, 64};
+    map.tilemap[2] = {48, 64};
+    map.tilemap[3] = {16, 80};
+    map.tilemap[4] = {32, 80};
+    map.tilemap[5] = {48, 80};
+    map.tilemap[6] = {16, 96};
+    map.tilemap[7] = {32, 96};
     Vec2f mouse;
 
     SDL_Event e;
 
+    map.tilesize = 16;
+    map.drawsize = 2 * map.tilesize;
+    map.dim = {73, 30};
 
-    int tsize = 16;
-    SDL_Rect tile = {
-        0, 0,
-        tsize,
-        tsize
-    };
-    SDL_Rect maprect = {
-        0, 0,
-        tsize * 70,
-        tsize * 32
-    };
-
-    uint32_t *indices = new uint32_t [maprect.w / tsize * maprect.h / tsize];
-    SDL_Texture *map = graphicsInstance->CreateTexture(maprect.w, maprect.h);
-    for (int x = 0; x < maprect.w / tsize; x ++) {
-        for (int y = 0; y < maprect.h / tsize; y ++) {
-            indices[x * maprect.h / tsize + y] = rand() & 7;
-        }
-    }
-    graphicsInstance->BindTexture(map);
-    SDL_Rect tilesrc = {
-        0, 0,
-        tsize, tsize
-    };
-    for (int x = 0; x < maprect.w / tsize; x ++) {
-        tile.x = tsize * x;
-        for (int y = 0; y < maprect.h / tsize; y ++) {
-            tile.y = tsize * y;
-            tilesrc.x = tilemap[indices[x * maprect.h / tsize + y]].x;
-            tilesrc.y = tilemap[indices[x * maprect.h / tsize + y]].y;
-            graphicsInstance->DrawTexture(singleTexture, tilesrc, tile);
-        }
-    }
-    graphicsInstance->BindTexture(NULL);
-    delete []indices;
+    map.indices = new int [map.dim.x * map.dim.y];
+    for (int x = 0; x < map.dim.x; x ++)
+        for (int y = 0; y < map.dim.y; y ++)
+            map.indices[x * map.dim.y + y] = (x == 0 || x == map.dim.x - 1 || y == 0 || y == map.dim.y - 1 ? -1 : 1) * ((rand() & 3) + 1);
 
     Vec2f offset;
+    Vec2f f = {0.1, 0};
 
     Input *inputInstance = Input::GetInstance();
     inputInstance->BindActionToKey(SDL_SCANCODE_W, std::bind(&Player::MoveUp   , &player), true);
     inputInstance->BindActionToKey(SDL_SCANCODE_A, std::bind(&Player::MoveLeft , &player), true);
     inputInstance->BindActionToKey(SDL_SCANCODE_S, std::bind(&Player::MoveDown , &player), true);
     inputInstance->BindActionToKey(SDL_SCANCODE_D, std::bind(&Player::MoveRight, &player), true);
+    inputInstance->BindActionToKey(SDL_SCANCODE_L, std::bind(&Player::AddForce , &player, f), true);
     inputInstance->BindActionToBtn(MouseButton::Left, std::bind(&Player::Attack, &player), false);
     inputInstance->BindActionToKey(SDL_SCANCODE_DOWN, std::bind(&UI::ChangeOption, uiInstance, false), false);
     inputInstance->BindActionToKey(SDL_SCANCODE_UP  , std::bind(&UI::ChangeOption, uiInstance, true ), false);
@@ -112,17 +86,10 @@ int main(int argc, char *argv[]) {
             offset = cam.GetOffset();
         }
 
-        SDL_Rect dmaprect = {
-            round(-offset.x),
-            round(-offset.y),
-            maprect.w * 2,
-            maprect.h * 2
-        };
-
         graphicsInstance->Clear();
-        graphicsInstance->DrawTexture(map, maprect, dmaprect);
-        if(uiInstance->GetCurrentState() == GameState::ALIVE)
-            cam.Render(player);
+        if(uiInstance->GetCurrentState() == GameState::ALIVE) {
+            cam.Render(player, map);
+        }
         uiInstance->Draw(graphicsInstance, player);
 
         graphicsInstance->Update();
