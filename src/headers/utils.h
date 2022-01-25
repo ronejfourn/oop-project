@@ -5,6 +5,7 @@
 constexpr float pi = 3.14159265f;
 
 #define ut_clamp(val, min, max) ((val) > (max)) ? (max) : ((val) < (min)) ? (min) : (val)
+#define ut_abs(a) ((a) > (0)) ? (a) : -(a)
 
 static float Q_rsqrt(float number )
 {
@@ -76,5 +77,14 @@ namespace Logger {
         std::cout << "[WARNING]: " << msg << std::endl;
     }
 }
+
+struct SDL_Texture;
+struct Map {
+    Vec2i *tilemap;
+    int   *indices;
+    Vec2i dim;
+    int tilesize, drawsize;
+    SDL_Texture *texture;
+};
 
 #endif

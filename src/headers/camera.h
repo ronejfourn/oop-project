@@ -16,10 +16,11 @@ public:
 
     Vec2f GetCursorPosition();
     Vec2f GetOffset();
+    Recti GetDrawArea();
 
     void SetDrawArea(Recti area);
     void SetAnchor(Entity *anchor);
 
     void Update();
-    void Render(Player &player);
+    void Render(Player &player, Map &map);
 };
