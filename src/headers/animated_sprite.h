@@ -19,6 +19,6 @@ public:
     void AddAnimation(uint32_t state, int x, int y, int w, int h, uint32_t frameCount = 1);
 
     void Animate(float deltatime, uint32_t state);
-    void Draw(Graphics *g, uint32_t state, SDL_FRect &dst, SDL_RendererFlip flip, float angle = 0, SDL_FPoint *center = NULL);
-    void Draw(Graphics *g, uint32_t state, SDL_Rect &dst , SDL_RendererFlip flip, float angle = 0, SDL_Point  *center = NULL);
+    void Draw(Graphics *g, uint32_t state, SDL_FRect &dst, SDL_RendererFlip flip, float angle = 0, SDL_FPoint *center = NULL) override;
+    void Draw(Graphics *g, uint32_t state, SDL_Rect &dst , SDL_RendererFlip flip, float angle = 0, SDL_Point  *center = NULL) override;
 };

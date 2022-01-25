@@ -1,5 +1,6 @@
 #include "headers/player.h"
 #include "headers/melee.h"
+#include "headers/projectile.h"
 
 extern SDL_Texture *singleTexture;
 
@@ -11,7 +12,7 @@ namespace {
 }
 
 Player::Player() : Entity() {
-    _weapon  = new Melee(this, 25, Weapons::red_gem_sword);
+    _weapon  = new Range(this, 15, Weapons::bow);
     _state   = EntityState::Idle;
     _box.dim = {p_width, p_height};
     _hp = 100;

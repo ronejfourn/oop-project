@@ -113,8 +113,8 @@ int main(int argc, char *argv[]) {
         }
 
         SDL_Rect dmaprect = {
-            round(-offset.x),
-            round(-offset.y),
+            (int)round(-offset.x),
+            (int)round(-offset.y),
             maprect.w * 2,
             maprect.h * 2
         };
