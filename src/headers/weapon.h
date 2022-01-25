@@ -26,7 +26,7 @@ protected:
     Entity *_anchor;
     Rectf _box;
     float _radius, _angle;
-    Vec2f _dir, _power, _atime;
+    Vec2f _dir, _power;
     SDL_RendererFlip _flip;
 public:
     Weapon();
