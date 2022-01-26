@@ -68,30 +68,5 @@ void Camera::Render(Player &player, Map &map) {
             _ginstance->DrawTexture(map.texture, src, dst);
         }
     }
-    Rectf _box = player.GetBox();
-    Vec2f ppok  = {_box.pos.x + _box.dim.x / 2, _box.pos.y + _box.dim.y};
-    Vec2i tk = {
-        (int(ppok.x) / map.drawsize - 1),
-        (int(ppok.y) / map.drawsize - 1),
-    };
-    Vec2i leni = {3, 3};
-    for (int x = tk.x < 0 ? 0 : tk.x; x < ((tk.x + leni.x) < map.dim.x ? (tk.x + leni.x) : map.dim.x); x ++) {
-    for (int y = 0; y < map.dim.y; y ++) {
-        if (map.indices[x * map.dim.y + y] > 0) continue;
-        SDL_FRect wallrect = {
-            float(x * map.drawsize) - _offset.x, float(y * map.drawsize) - _offset.y,
-            float(map.drawsize)    , float(map.drawsize)
-        };
-        _ginstance->DrawRect(wallrect, 255, 0, 0);
-    }}
-    for (int y = tk.y < 0 ? 0 : tk.y; y < ((tk.y + leni.y) < map.dim.y ? (tk.y + leni.y) : map.dim.y); y ++) {
-    for (int x = 0; x < map.dim.x; x ++) {
-        if (map.indices[x * map.dim.y + y] > 0) continue;
-        SDL_FRect wallrect = {
-            float(x * map.drawsize) - _offset.x, float(y * map.drawsize) - _offset.y,
-            float(map.drawsize)    , float(map.drawsize)
-        };
-        _ginstance->DrawRect(wallrect, 255, 0, 0);
-    }}
     player.Draw(_ginstance, _offset);
 }

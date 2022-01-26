@@ -4,8 +4,8 @@
 
 constexpr float pi = 3.14159265f;
 
-#define ut_clamp(val, min, max) ((val) > (max)) ? (max) : ((val) < (min)) ? (min) : (val)
-#define ut_abs(a) ((a) > (0)) ? (a) : -(a)
+#define ut_clamp(val, min, max) (((val) > (max)) ? (max) : ((val) < (min)) ? (min) : (val))
+#define ut_abs(a) (((a) > (0)) ? (a) : -(a))
 
 static float Q_rsqrt(float number )
 {

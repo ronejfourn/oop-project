@@ -2,6 +2,8 @@
 #include "headers/melee.h"
 #include "headers/collision.h"
 #include "headers/projectile.h"
+#include <vector>
+#include <algorithm>
 
 extern SDL_Texture *singleTexture;
 
@@ -87,31 +89,55 @@ void Player::Attack() {
     _weapon->Attack();
 }
 
+bool sort_func_ptr(const std::pair<int, float>& a, const std::pair<int, float>& b) {
+	return a.second < b.second;
+}
+
+// TODO: move this into room
+
 void Player::Collision(Entity *enemies, Map &map, float deltatime) {
-    Vec2f ppos  = _box.pos + _box.dim / 2;
-    Vec2i tl = {
-        (int(ppos.x) / map.drawsize - 1),
-        (int(ppos.y) / map.drawsize - 1),
-    };
     _box.pos -= _vel * deltatime;
-    Vec2i len = {3, 3};
-    float ct;
-    Vec2f cp, cn;
-    Rectf wallrect;
-    wallrect.dim = {float(map.drawsize), float(map.drawsize)};
-    for (int x = tl.x < 0 ? 0 : tl.x; x < ((tl.x + 3) < map.dim.x ? (tl.x + 3) : map.dim.x); x ++) {
-    for (int y = 0; y < map.dim.y; y ++) {
-        if (map.indices[x * map.dim.y + y] > 0) continue;
-        wallrect.pos = {float(x * map.drawsize), float(y * map.drawsize)};
-        if (Collision::DynamicRectVsRect(&_box, _vel, &wallrect, cp, cn, ct, deltatime))
-			_vel += cn * Vec2f(ut_abs(_vel.x), ut_abs(_vel.y)) * (1 - ct);
-    }}
-    for (int y = tl.y < 0 ? 0 : tl.y; y < ((tl.y + 3) < map.dim.y ? (tl.y + 3) : map.dim.y); y ++) {
-    for (int x = 0; x < map.dim.x; x ++) {
-        if (map.indices[x * map.dim.y + y] > 0) continue;
-        wallrect.pos = {float(x * map.drawsize), float(y * map.drawsize)};
-        if (Collision::DynamicRectVsRect(&_box, _vel, &wallrect, cp, cn, ct, deltatime))
-			_vel += cn * Vec2f(ut_abs(_vel.x), ut_abs(_vel.y)) * (1 - ct);
-    }}
-    _box.pos += _vel * deltatime;
+
+	Vec2f cp, cn;
+	float t;
+
+	std::vector<std::pair<int, float>> z;
+
+    Rectf wall_rect[4] = {
+        {0, 0, static_cast<float>(map.dim.x * map.drawsize), static_cast<float>(map.drawsize)},
+        {0, 0, static_cast<float>(map.drawsize), static_cast<float>(map.dim.y * map.drawsize)},
+        {0, static_cast<float>((map.dim.y - 1) * map.drawsize), static_cast<float>(map.dim.x * map.drawsize), static_cast<float>(map.drawsize)},
+        {static_cast<float>((map.dim.x - 1) * map.drawsize), 0, static_cast<float>(map.drawsize), static_cast<float>(map.dim.y * map.drawsize)},
+    };
+
+    int steps = int(ceil(_vel.magnitude() * deltatime / map.drawsize));
+
+    if (steps > 0) {
+        float st = deltatime / steps;
+        while (steps > 0) {
+            for (int i = 0; i < 4; i++)
+                if (Collision::DynamicRectVsRect(&_box, _vel, &wall_rect[i], cp, cn, t, st))
+                    z.push_back({i, t});
+
+            std::sort(z.begin(), z.end(), sort_func_ptr);
+
+            for (int i = 0; i < z.size(); i++)
+                if (Collision::DynamicRectVsRect(&_box, _vel, &wall_rect[z[i].first], cp, cn, t, st))
+                    _vel += cn * Vec2f(ut_abs(_vel.x), ut_abs(_vel.y)) * (1 - t);
+            _box.pos += _vel * st;
+            z.clear();
+            steps --;
+        }
+    } else {
+        for (int i = 0; i < 4; i++)
+            if (Collision::DynamicRectVsRect(&_box, _vel, &wall_rect[i], cp, cn, t, deltatime))
+                z.push_back({i, t});
+
+        std::sort(z.begin(), z.end(), sort_func_ptr);
+
+        for (int i = 0; i < z.size(); i++)
+            if (Collision::DynamicRectVsRect(&_box, _vel, &wall_rect[z[i].first], cp, cn, t, deltatime))
+                _vel += cn * Vec2f(ut_abs(_vel.x), ut_abs(_vel.y)) * (1 - t);
+        _box.pos += _vel * deltatime;
+    }
 }

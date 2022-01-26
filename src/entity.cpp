@@ -14,19 +14,19 @@ Entity::Entity() {
 }
 
 void Entity::MoveUp() {
-    _accn.y = -_accns;
+    _accn.y -= _accns;
 }
 
 void Entity::MoveLeft() {
-    _accn.x = -_accns;
+    _accn.x -= _accns;
 }
 
 void Entity::MoveDown() {
-    _accn.y = +_accns;
+    _accn.y += _accns;
 }
 
 void Entity::MoveRight() {
-    _accn.x = +_accns;
+    _accn.x += _accns;
 }
 
 void Entity::AddForce(Vec2f op) {
