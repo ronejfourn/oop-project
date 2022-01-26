@@ -21,7 +21,7 @@ int main(int argc, char *argv[]) {
     graphicsInstance->SetTargetFPS(FPS);
     graphicsInstance->SetTitle("Game", "../../res/icon.bmp");
 
-    singleTexture = graphicsInstance->LoadImage("../../res/0x72_DungeonTilesetII_v1.4/0x72_DungeonTilesetII_v1.4.png");
+    singleTexture = graphicsInstance->LoadImage("../../res/tileset.png");
     Player player(100, 100);
     Map map;
     map.texture = singleTexture;
@@ -45,17 +45,15 @@ int main(int argc, char *argv[]) {
     map.indices = new int [map.dim.x * map.dim.y];
     for (int x = 0; x < map.dim.x; x ++)
         for (int y = 0; y < map.dim.y; y ++)
-            map.indices[x * map.dim.y + y] = (x == 0 || x == map.dim.x - 1 || y == 0 || y == map.dim.y - 1 ? -1 : 1) * ((rand() & 3) + 1);
+            map.indices[x * map.dim.y + y] = (x == 0 || x == map.dim.x - 1 || y == 0 || y == map.dim.y - 1 ? -1 : 1) * ((rand() & 7) + 1);
 
     Vec2f offset;
-    Vec2f f = {0.1, 0};
 
     Input *inputInstance = Input::GetInstance();
     inputInstance->BindActionToKey(SDL_SCANCODE_W, std::bind(&Player::MoveUp   , &player), true);
     inputInstance->BindActionToKey(SDL_SCANCODE_A, std::bind(&Player::MoveLeft , &player), true);
     inputInstance->BindActionToKey(SDL_SCANCODE_S, std::bind(&Player::MoveDown , &player), true);
     inputInstance->BindActionToKey(SDL_SCANCODE_D, std::bind(&Player::MoveRight, &player), true);
-    inputInstance->BindActionToKey(SDL_SCANCODE_L, std::bind(&Player::AddForce , &player, f), true);
     inputInstance->BindActionToBtn(MouseButton::Left, std::bind(&Player::Attack, &player), false);
     inputInstance->BindActionToKey(SDL_SCANCODE_DOWN, std::bind(&UI::ChangeOption, uiInstance, false), false);
     inputInstance->BindActionToKey(SDL_SCANCODE_UP  , std::bind(&UI::ChangeOption, uiInstance, true ), false);
