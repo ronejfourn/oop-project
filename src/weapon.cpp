@@ -34,6 +34,10 @@ void Weapon::Draw(Graphics *g, Vec2f offset) {
     _sprite.Draw(g, 0, dst, _flip, _angle, &b);
 }
 
+void Weapon::UpdatePosition() {
+    _box.pos = _anchor->GetCenter() + _dir * _radius - _box.dim / 2;
+}
+
 void Weapon::Switch(Weapons name) {
     switch(name) {
     case Weapons::regular_sword:

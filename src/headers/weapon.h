@@ -38,4 +38,5 @@ public:
     virtual void PointTowards(Vec2f target) = 0;
     Rectf GetBox() {return _box;}
     virtual bool Collision (Entity *) = 0;
+    virtual void UpdatePosition();
 };

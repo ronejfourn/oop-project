@@ -140,4 +140,5 @@ void Player::Collision(Entity *enemies, Map &map, float deltatime) {
                 _vel += cn * Vec2f(ut_abs(_vel.x), ut_abs(_vel.y)) * (1 - t);
         _box.pos += _vel * deltatime;
     }
+    _weapon->UpdatePosition();
 }
