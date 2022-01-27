@@ -32,8 +32,10 @@ void Range::Attack() {
         _pos[_count] = _box.pos + _box.dim / 4;
     else
         _pos[_count] = _box.pos;
-    Vec2f tmp = _target - _pos[_count];
-    _ang[_count] = atan(tmp.y / tmp.x) * 180 / pi - (tmp.x > 0 ? (-90) : 90);
+    _ang[_count] = atan(_dir.y / _dir.x) - (_dir.x > 0 ? (-pi/2) : pi/2);
+    _velx[_count] = _vel * sin(_ang[_count]);
+    _vely[_count] = -_vel * cos(_ang[_count]);
+    _ang[_count] *= (180/pi);
     _count++; 
 }
 
@@ -42,8 +44,8 @@ void Range::Update(float deltatime) {
     _box.pos = cen + _dir * _radius - _box.dim / 2;
 
     for(int i = 0; i < _count; i++) {
-        _pos[i].x += deltatime * _vel * sin(_ang[i] * pi / 180);
-        _pos[i].y += deltatime * -_vel * cos(_ang[i] * pi / 180);
+        _pos[i].x += deltatime * _velx[i];
+        _pos[i].y += deltatime * _vely[i];
     }
 }
 

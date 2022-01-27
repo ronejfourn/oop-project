@@ -7,7 +7,7 @@ class Range : public Weapon {
     SDL_Rect _projectilesrc;
     uint8_t _count;
     Vec2f _pos[256], _target;
-    float _vel, _ang[256];
+    float _vel, _ang[256], _velx[256], _vely[256];
 public:
     Range();
     Range(Entity * holder, float rad, Weapons name);
