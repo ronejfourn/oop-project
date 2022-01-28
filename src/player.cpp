@@ -15,7 +15,7 @@ namespace {
 }
 
 Player::Player() : Entity() {
-    _weapon  = new Range(this, 15, Weapons::bow);
+    _weapon  = new Melee(this, 25, Weapons::regular_sword);
     _state   = EntityState::Idle;
     _box.dim = {p_width, p_height};
     _hp = 100;
@@ -101,8 +101,6 @@ void Player::Collision(Entity *enemies, Map &map, float deltatime) {
 	Vec2f cp, cn;
 	float t;
 
-	std::vector<std::pair<int, float>> z;
-
     Rectf wall_rect[4] = {
         {0, 0, static_cast<float>(map.dim.x * map.drawsize), static_cast<float>(map.drawsize)},
         {0, 0, static_cast<float>(map.drawsize), static_cast<float>(map.dim.y * map.drawsize)},
@@ -110,35 +108,21 @@ void Player::Collision(Entity *enemies, Map &map, float deltatime) {
         {static_cast<float>((map.dim.x - 1) * map.drawsize), 0, static_cast<float>(map.drawsize), static_cast<float>(map.dim.y * map.drawsize)},
     };
 
-    int steps = int(ceil(_vel.magnitude() * deltatime / map.drawsize));
-
-    if (steps > 0) {
-        float st = deltatime / steps;
-        while (steps > 0) {
-            for (int i = 0; i < 4; i++)
-                if (Collision::DynamicRectVsRect(&_box, _vel, &wall_rect[i], cp, cn, t, st))
-                    z.push_back({i, t});
-
-            std::sort(z.begin(), z.end(), sort_func_ptr);
-
-            for (int i = 0; i < z.size(); i++)
-                if (Collision::DynamicRectVsRect(&_box, _vel, &wall_rect[z[i].first], cp, cn, t, st))
-                    _vel += cn * Vec2f(ut_abs(_vel.x), ut_abs(_vel.y)) * (1 - t);
-            _box.pos += _vel * st;
-            z.clear();
-            steps --;
-        }
-    } else {
+    float steps = _vel.magnitude() * deltatime / map.drawsize + 1;
+    float st = deltatime / steps;
+    while (steps > 0) {
+        std::vector<std::pair<int, float>> z;
         for (int i = 0; i < 4; i++)
-            if (Collision::DynamicRectVsRect(&_box, _vel, &wall_rect[i], cp, cn, t, deltatime))
+            if (Collision::DynamicRectVsRect(&_box, _vel, &wall_rect[i], cp, cn, t, st))
                 z.push_back({i, t});
 
         std::sort(z.begin(), z.end(), sort_func_ptr);
 
         for (int i = 0; i < z.size(); i++)
-            if (Collision::DynamicRectVsRect(&_box, _vel, &wall_rect[z[i].first], cp, cn, t, deltatime))
+            if (Collision::DynamicRectVsRect(&_box, _vel, &wall_rect[z[i].first], cp, cn, t, st))
                 _vel += cn * Vec2f(ut_abs(_vel.x), ut_abs(_vel.y)) * (1 - t);
-        _box.pos += _vel * deltatime;
+        _box.pos += _vel * st;
+        steps --;
     }
     _weapon->UpdatePosition();
 }

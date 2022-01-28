@@ -15,7 +15,8 @@ Melee::Melee()
         _isonhold    = false;
         _facingright = false;
         _htime = {500, 0};
-        _atime = {160, 0};
+        _atime = {180, 0};
+        _vel = 0; _accn = 4 * 4 / 3.0f * pi / (_atime.x * _atime.x);
     }
 
 Melee::Melee(Entity * holder, float rad, Weapons name)
@@ -26,7 +27,8 @@ Melee::Melee(Entity * holder, float rad, Weapons name)
         _range = Q_rsqrt(sqr) * sqr;
         _facingright = false;
         _htime = {500, 0};
-        _atime = {160, 0};
+        _atime = {180, 0};
+        _vel = 0; _accn = 4 * 4 / 3.0f * pi / (_atime.x * _atime.x);
     }
 
 void Melee::Attack() {
@@ -70,8 +72,9 @@ void Melee::PointTowards(Vec2f target) {
 
 void Melee::Update(float deltatime) {
 	if (_isattacking) {
+        _vel += (_atime.y < _atime.x / 2 ? 1 : -1) * _accn * deltatime;
         Vec2f cen = _anchor->GetCenter();
-        float ang = 4.0f / 3 * pi * deltatime / _atime.x;
+        float ang = _vel * deltatime;
         float ca  = cos(ang), sa = sin(ang);
         Vec2f tmp = _dir;
         if (_facingright) {
@@ -88,6 +91,7 @@ void Melee::Update(float deltatime) {
         _box.pos = cen + _dir * _radius - _box.dim / 2;
         _atime.y += deltatime;
         if (_atime.y >= _atime.x) {
+            _vel = 0;
             _atime.y = 0;
             _htime.y = 0;
             _isattacking = false;

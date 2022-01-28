@@ -22,10 +22,10 @@ int main(int argc, char *argv[]) {
     graphicsInstance->SetTitle("Game", "../../res/icon.bmp");
 
     singleTexture = graphicsInstance->LoadImage("../../res/tileset.png");
-    Player player(100, 100);
+    Player player(100, 700);
     Map map;
     map.texture = singleTexture;
-    map.tilemap = new Vec2i[8];
+    map.tilemap = new Vec2i[34];
     map.tilemap[0] = {16, 64};
     map.tilemap[1] = {32, 64};
     map.tilemap[2] = {48, 64};
@@ -34,6 +34,37 @@ int main(int argc, char *argv[]) {
     map.tilemap[5] = {48, 80};
     map.tilemap[6] = {16, 96};
     map.tilemap[7] = {32, 96};
+
+    map.tilemap[8] = {16, 0};
+    map.tilemap[9] = {32, 0};
+    map.tilemap[10] = {48, 0};
+
+    map.tilemap[11] = {16, 16};
+    map.tilemap[12] = {32, 16};
+    map.tilemap[13] = {48, 16};
+
+    map.tilemap[14] = {0 , 112};
+    map.tilemap[15] = {16, 112};
+    map.tilemap[16] = {0 , 128};
+    map.tilemap[17] = {16, 128};
+    map.tilemap[18] = {0 , 144};
+    map.tilemap[19] = {16, 144};
+
+    map.tilemap[20] = {32, 112};
+    map.tilemap[21] = {48, 112};
+    map.tilemap[22] = {32, 128};
+    map.tilemap[23] = {48, 128};
+    map.tilemap[24] = {32, 144};
+    map.tilemap[25] = {48, 144};
+    map.tilemap[26] = {32, 160};
+    map.tilemap[27] = {48, 160};
+
+    map.tilemap[28] = {80, 128};
+    map.tilemap[29] = {64, 128};
+    map.tilemap[30] = {80, 144};
+    map.tilemap[31] = {64, 144};
+    map.tilemap[32] = {80, 160};
+    map.tilemap[33] = {64, 160};
     Vec2f mouse;
 
     SDL_Event e;
@@ -45,7 +76,7 @@ int main(int argc, char *argv[]) {
     map.indices = new int [map.dim.x * map.dim.y];
     for (int x = 0; x < map.dim.x; x ++)
         for (int y = 0; y < map.dim.y; y ++)
-            map.indices[x * map.dim.y + y] = (x == 0 || x == map.dim.x - 1 || y == 0 || y == map.dim.y - 1 ? -1 : 1) * ((rand() & 7) + 1);
+            map.indices[x * map.dim.y + y] = (x == 0 || x == map.dim.x - 1 || y == 0 || y == map.dim.y - 1 ? -1 : 1) * ((rand() % 34) + 1);
 
     Vec2f offset;
 

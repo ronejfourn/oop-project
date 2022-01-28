@@ -3,7 +3,7 @@
 class Melee : public Weapon {
     bool _isattacking;
     bool _isonhold;
-    float _range;
+    float _range, _vel, _accn;
     bool _facingright;
     Vec2f _htime, _atime;
 public:
