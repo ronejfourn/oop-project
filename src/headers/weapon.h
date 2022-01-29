@@ -16,6 +16,7 @@ enum class Weapons {
     machete,
     cleaver,
     knight_sword,
+    MELEE_WEAPON,
     red_magic_staff,
     bow
 };
@@ -28,15 +29,15 @@ protected:
     float _radius, _angle;
     Vec2f _dir, _power;
     SDL_RendererFlip _flip;
+    void Switch(Weapons newweap);
 public:
     Weapon();
-    Weapon(Entity * holder, float rad, Weapons name = Weapons::knife);
-    void Switch(Weapons newweap);
-    virtual void Draw(Graphics *g, Vec2f offset);
+    Weapon(Entity * holder, float rad, Weapons name);
     virtual void Attack() = 0;
+    virtual bool Collision(Entity *) = 0;
     virtual void Update(float deltatime) = 0;
     virtual void PointTowards(Vec2f target) = 0;
+    virtual void Draw(Graphics *g, Vec2f offset) = 0;
     Rectf GetBox() {return _box;}
-    virtual bool Collision (Entity *) = 0;
-    virtual void UpdatePosition();
+    void UpdatePosition();
 };

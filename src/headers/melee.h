@@ -1,14 +1,18 @@
 #include "weapon.h"
 
+enum {
+    Attacking = 0x1,
+    OnHold = 0x2,
+    FacingRight = 0x4,
+};
+
 class Melee : public Weapon {
-    bool _isattacking;
-    bool _isonhold;
-    float _range, _vel, _accn;
-    bool _facingright;
-    Vec2f _htime, _atime;
+    uint8_t _state;
+    float _range, _vel;
+    float _htime, _atime;
 public:
     Melee();
-    Melee(Entity * holder, float rad, Weapons name = Weapons::knife);
+    Melee(Entity * holder, float rad, Weapons name);
     void Attack() override;
     void Draw(Graphics *g, Vec2f offset) override;
     void Update(float deltatime) override;

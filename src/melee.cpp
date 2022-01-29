@@ -4,104 +4,104 @@
 #include "headers/collision.h"
 #include <cmath>
 
-const float ct  = cos(2 * pi / 3);
-const float st  = sin(2 * pi / 3);
+namespace {
+    const float ct  = cos(2 * pi / 3);
+    const float st  = sin(2 * pi / 3);
+    const float hldtime  = 500;
+    const float atktime  = 120;
+    const float omega    = 4.0f / 3.0f * pi / atktime;
+};
 
 Melee::Melee()
 	: Weapon() {
-        _isattacking = false;
+        _state = 0;
         float sqr = (_radius * _radius + _box.dim.y * _box.dim.y / 4) - (_radius * _box.dim.y * cos(5.0f / 6 * pi));
         _range = Q_rsqrt(sqr) * sqr;
-        _isonhold    = false;
-        _facingright = false;
-        _htime = {500, 0};
-        _atime = {180, 0};
-        _vel = 0; _accn = 4 * 4 / 3.0f * pi / (_atime.x * _atime.x);
+        _htime = 0;
+        _atime = 0;
+        _vel = 0;
     }
 
 Melee::Melee(Entity * holder, float rad, Weapons name)
 	: Weapon(holder, rad, name) {
-        _isattacking = false;
-        _isonhold    = false;
+        _state = 0;
         float sqr = (_radius * _radius + _box.dim.y * _box.dim.y / 4) - (_radius * _box.dim.y * cos(5.0f / 6 * pi));
         _range = Q_rsqrt(sqr) * sqr;
-        _facingright = false;
-        _htime = {500, 0};
-        _atime = {180, 0};
-        _vel = 0; _accn = 4 * 4 / 3.0f * pi / (_atime.x * _atime.x);
+        _htime = 0;
+        _atime = 0;
+        _vel = 0;
     }
 
 void Melee::Attack() {
-    if (!_isattacking) {
-        _isattacking = true;
+    if (!(_state & Attacking)) {
+        _state |= Attacking;
     }
 }
 
 void Melee::PointTowards(Vec2f target) {
-	if (!_isattacking) {
+	if (!(_state & Attacking)) {
         Vec2f cen = _anchor->GetCenter();
         Vec2f tmp = (target - cen).normalized();
-        if (tmp.x < 0 && !_isonhold) {
+        if (tmp.x < 0 && !(_state & OnHold)) {
             _dir.x = tmp.x * ct - tmp.y * st;
             _dir.y = tmp.x * st + tmp.y * ct;
             _flip = SDL_FLIP_HORIZONTAL;
             _angle = atan(tmp.y / tmp.x) * 180 / pi + 60;
-            _facingright = false;
-        } else if (!_isonhold) {
+            _state &= ~FacingRight;
+        } else if (!(_state & OnHold)) {
             _dir.x =  tmp.x * ct + tmp.y * st;
             _dir.y = -tmp.x * st + tmp.y * ct;
             _flip = SDL_FLIP_NONE;
             _angle = atan(tmp.y / tmp.x) * 180 / pi - 60;
-            _facingright = true;
+            _state |= FacingRight;
         } else if (tmp.x < 0) {
             _dir.x =  tmp.x * ct + tmp.y * st;
             _dir.y = -tmp.x * st + tmp.y * ct;
             _flip = SDL_FLIP_NONE;
             _angle = atan(tmp.y / tmp.x) * 180 / pi + 120;
-            _facingright = true;
+            _state |= FacingRight;
         } else {
             _dir.x =  tmp.x * ct - tmp.y * st;
             _dir.y =  tmp.x * st + tmp.y * ct;
             _flip = SDL_FLIP_HORIZONTAL;
             _angle = atan(tmp.y / tmp.x) * 180 / pi - 120;
-            _facingright = false;
+            _state &= ~FacingRight;
         }
         _box.pos = cen + _dir * _radius - _box.dim / 2;
 	}
 }
 
 void Melee::Update(float deltatime) {
-	if (_isattacking) {
-        _vel += (_atime.y < _atime.x / 2 ? 1 : -1) * _accn * deltatime;
+	if (_state & Attacking) {
         Vec2f cen = _anchor->GetCenter();
-        float ang = _vel * deltatime;
-        float ca  = cos(ang), sa = sin(ang);
+        float ta = omega * deltatime;
+        float ca  = cos(ta), sa = sin(ta);
         Vec2f tmp = _dir;
-        if (_facingright) {
+        if (_state & FacingRight) {
             _dir.x = tmp.x * ca - tmp.y * sa;
             _dir.y = tmp.x * sa + tmp.y * ca;
             _flip = SDL_FLIP_NONE;
-            _angle += ang / pi * 180;
+            _angle += ta / pi * 180;
         } else {
             _dir.x =  tmp.x * ca + tmp.y * sa;
             _dir.y = -tmp.x * sa + tmp.y * ca;
             _flip  = SDL_FLIP_HORIZONTAL;
-            _angle -= ang / pi * 180;
+            _angle -= ta / pi * 180;
         }
         _box.pos = cen + _dir * _radius - _box.dim / 2;
-        _atime.y += deltatime;
-        if (_atime.y >= _atime.x) {
-            _vel = 0;
-            _atime.y = 0;
-            _htime.y = 0;
-            _isattacking = false;
-            _isonhold = !_isonhold;
+        _atime += deltatime;
+        if (_atime >= atktime) {
+            _vel   = 0;
+            _atime = 0;
+            _htime = 0;
+            _state &= ~Attacking;
+            _state ^= OnHold;
         }
-    } else if (_isonhold) {
-        _htime.y += deltatime;
-        if (_htime.y > _htime.x) {
-            _htime.y = 0;
-            _isonhold = false;
+    } else if (_state & OnHold) {
+        _htime += deltatime;
+        if (_htime > hldtime) {
+            _htime = 0;
+            _state &= ~OnHold;
         }
     }
 }
@@ -122,6 +122,6 @@ void Melee::Draw(Graphics *g, Vec2f offset) {
 }
 
 bool Melee::Collision (Entity *entity) {
-    if (!_isattacking) return false;
+    if (!(_state & Attacking)) return false;
     return Collision::RayVsRect(entity->GetBox(), _anchor->GetCenter(), _dir, _range);
 }

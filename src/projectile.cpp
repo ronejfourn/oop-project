@@ -1,56 +1,53 @@
 #include "headers/projectile.h"
+#include "headers/entity.h"
 #include <cmath>
-#include <string>
 
 extern SDL_Texture *singleTexture;
 
 const float ct  = cos(2 * pi / 3);
 const float st  = sin(2 * pi / 3);
+const float pvel = 1.0f;
 
-Range::Range()
-	: Weapon() {
-        _count = 0;
-        _vel = 1.0f;
-    }
+Range::Range() : Weapon() {}
 
 Range::Range(Entity * holder, float rad, Weapons name)
 	: Weapon(holder, rad, name) {
         if(name == Weapons::bow) {
             _projectilesrc = {308, 186, 7, 21};
             _isbow = true;
-        }
-        else {
+        } else {
             _projectilesrc = {335, 175, 15, 15};
             _isbow = false;
         }
-        _count = 0;
-        _vel = 1.0f;
     }
 
 void Range::Attack() {
+    Projectile pr;
     if(_isbow)
-        _pos[_count] = _box.pos + _box.dim / 4;
+        pr.pos = _box.pos + _box.dim / 4;
     else
-        _pos[_count] = _box.pos;
-    _ang[_count] = atan(_dir.y / _dir.x) - (_dir.x > 0 ? (-pi/2) : pi/2);
-    _velx[_count] = _vel * sin(_ang[_count]);
-    _vely[_count] = -_vel * cos(_ang[_count]);
-    _ang[_count] *= (180/pi);
-    _count++; 
+        pr.pos = _box.pos;
+    pr.ang = atan(_dir.y / _dir.x) - (_dir.x > 0 ? (-pi/2) : pi/2);
+    pr.vel.x =  pvel * sin(pr.ang);
+    pr.vel.y = -pvel * cos(pr.ang);
+    pr.ang *= (180/pi);
+    _projectiles.insert(_projectiles.begin(), pr);
 }
 
 void Range::Update(float deltatime) {
     Vec2f cen = _anchor->GetCenter();
     _box.pos = cen + _dir * _radius - _box.dim / 2;
 
-    for(int i = 0; i < _count; i++) {
-        _pos[i].x += deltatime * _velx[i];
-        _pos[i].y += deltatime * _vely[i];
+    int count = _projectiles.size() - 1;
+    for(int i = count; i >= 0; i--) {
+        _projectiles[i].pos += _projectiles[i].vel * deltatime;
+        _projectiles[i].life += deltatime;
+        if (_projectiles[i].life >= 500)
+            _projectiles.pop_back();
     }
 }
 
 void Range::PointTowards(Vec2f target) {
-    _target = target;
     Vec2f cen = _anchor->GetCenter();
     _dir = (target - cen).normalized();
     _angle = atan(_dir.y / _dir.x) * 180 / pi;
@@ -70,10 +67,10 @@ void Range::Draw(Graphics *g, Vec2f offset) {
     _sprite.Draw(g, 0, dst, _flip, _angle, &b);
 
     SDL_Rect projectiledst = {0, 0, _projectilesrc.w * 2, _projectilesrc.h * 2};
-    for(int i = 0; i < _count; i++) {
-        projectiledst.x = _pos[i].x - offset.x;
-        projectiledst.y = _pos[i].y - offset.y;
-        g->DrawTexture(singleTexture, _projectilesrc, projectiledst, nullptr, _isbow ? _ang[i] : 0);
+    for(int i = 0; i < _projectiles.size(); i++) {
+        projectiledst.x = _projectiles[i].pos.x - offset.x;
+        projectiledst.y = _projectiles[i].pos.y - offset.y;
+        g->DrawTexture(singleTexture, _projectilesrc, projectiledst, nullptr, _isbow ? _projectiles[i].ang : 0);
     }
 }
 

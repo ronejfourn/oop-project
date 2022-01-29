@@ -21,19 +21,6 @@ Weapon::Weapon(Entity * holder, float rad, Weapons name) : Weapon() {
     Switch(name);
 }
 
-void Weapon::Draw(Graphics *g, Vec2f offset) {
-    SDL_FPoint b = {
-        _box.dim.x / 2,
-        _box.dim.y / 2
-    };
-    SDL_FRect dst = {
-        _box.pos.x - offset.x,
-        _box.pos.y - offset.y,
-        _box.dim.x, _box.dim.y
-    };
-    _sprite.Draw(g, 0, dst, _flip, _angle, &b);
-}
-
 void Weapon::UpdatePosition() {
     _box.pos = _anchor->GetCenter() + _dir * _radius - _box.dim / 2;
 }

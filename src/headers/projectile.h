@@ -1,13 +1,15 @@
 #include "weapon.h"
-#include "entity.h"
-#include <stdint.h>
+#include <vector>
+
+struct Projectile {
+    Vec2f pos, vel;
+    float ang, life;
+};
 
 class Range : public Weapon {
     bool _isbow;
     SDL_Rect _projectilesrc;
-    uint8_t _count;
-    Vec2f _pos[256], _target;
-    float _vel, _ang[256], _velx[256], _vely[256];
+    std::vector<Projectile> _projectiles;
 public:
     Range();
     Range(Entity * holder, float rad, Weapons name);

@@ -17,29 +17,22 @@ protected:
     AnimatedSprite _sprite;
 
     bool _alive, _limit_speed;
-    float _hp, _recovertime, _htime;
-    float _maxspd, _maxdspd, _accns;
+    float _hp, _mass, _recovertime, _htime;
     Vec2f _vel, _accn;
 
-    void Move(float deltatime);
+    void CollideAgainstMap(Map &map, float deltatime);
+    void Accelerate(float deltatime);
 public:
     Entity();
 
     void AddForce(Vec2f op);
-
-    Vec2f GetCenter();
+    Vec2f GetCenter() {return _box.pos + _box.dim / 2;}
     float GetHp() {return _hp;}
     Rectf GetBox() {return _box;}
 
-    void MoveUp   ();
-    void MoveLeft ();
-    void MoveDown ();
-    void MoveRight();
     virtual void Update(float deltatime) = 0;
-
-    virtual void TakeDamage(float damage);
-    virtual void Die();
-    virtual void FaceTowards(Vec2f pos);
-
-    virtual void Draw(Graphics *g, Vec2f offset);
+    virtual void Die() = 0;
+    virtual void Seek(Vec2f pos) = 0;
+    virtual void TakeDamage(float damage) = 0;
+    virtual void Draw(Graphics *g, Vec2f offset) = 0;
 };

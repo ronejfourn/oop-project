@@ -1,6 +1,5 @@
 #include "headers/player.h"
 #include "headers/melee.h"
-#include "headers/collision.h"
 #include "headers/projectile.h"
 #include <vector>
 #include <algorithm>
@@ -12,6 +11,7 @@ namespace {
     const int s_height = 22;
     const float p_width  = s_width  * 2;
     const float p_height = s_height * 2;
+    const float p_accl   = 0.002f;
 }
 
 Player::Player() : Entity() {
@@ -39,13 +39,33 @@ void Player::TakeDamage(float damage) {
     }
 }
 
-void Player::FaceTowards(Vec2f pos) {
+void Player::Die() {
+
+}
+
+void Player::MoveUp() {
+    _accn.y -= p_accl;
+}
+
+void Player::MoveLeft() {
+    _accn.x -= p_accl;
+}
+
+void Player::MoveDown() {
+    _accn.y += p_accl;
+}
+
+void Player::MoveRight() {
+    _accn.x += p_accl;
+}
+
+void Player::Seek(Vec2f pos) {
     _flip = (pos.x < _box.pos.x + _box.dim.x / 2.0) ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE;
     _weapon->PointTowards(pos);
 }
 
 void Player::Update(float deltatime) {
-    Move(deltatime);
+    Accelerate(deltatime);
     _weapon->Update(deltatime);
 
     if (_state == EntityState::Hurt) {
@@ -82,47 +102,13 @@ void Player::Draw(Graphics *g, Vec2f offset) {
     }
     if (ontop)
         _weapon->Draw(g, offset);
-    g->DrawRect(dst, 255, 0, 0);
 }
 
 void Player::Attack() {
     _weapon->Attack();
 }
 
-bool sort_func_ptr(const std::pair<int, float>& a, const std::pair<int, float>& b) {
-	return a.second < b.second;
-}
-
-// TODO: move this into room
-
 void Player::Collision(Entity *enemies, Map &map, float deltatime) {
-    _box.pos -= _vel * deltatime;
-
-	Vec2f cp, cn;
-	float t;
-
-    Rectf wall_rect[4] = {
-        {0, 0, static_cast<float>(map.dim.x * map.drawsize), static_cast<float>(map.drawsize)},
-        {0, 0, static_cast<float>(map.drawsize), static_cast<float>(map.dim.y * map.drawsize)},
-        {0, static_cast<float>((map.dim.y - 1) * map.drawsize), static_cast<float>(map.dim.x * map.drawsize), static_cast<float>(map.drawsize)},
-        {static_cast<float>((map.dim.x - 1) * map.drawsize), 0, static_cast<float>(map.drawsize), static_cast<float>(map.dim.y * map.drawsize)},
-    };
-
-    float steps = _vel.magnitude() * deltatime / map.drawsize + 1;
-    float st = deltatime / steps;
-    while (steps > 0) {
-        std::vector<std::pair<int, float>> z;
-        for (int i = 0; i < 4; i++)
-            if (Collision::DynamicRectVsRect(&_box, _vel, &wall_rect[i], cp, cn, t, st))
-                z.push_back({i, t});
-
-        std::sort(z.begin(), z.end(), sort_func_ptr);
-
-        for (int i = 0; i < z.size(); i++)
-            if (Collision::DynamicRectVsRect(&_box, _vel, &wall_rect[z[i].first], cp, cn, t, st))
-                _vel += cn * Vec2f(ut_abs(_vel.x), ut_abs(_vel.y)) * (1 - t);
-        _box.pos += _vel * st;
-        steps --;
-    }
+    CollideAgainstMap(map, deltatime);
     _weapon->UpdatePosition();
 }

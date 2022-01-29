@@ -1,4 +1,14 @@
 #include "headers/entity.h"
+#include "headers/collision.h"
+#include <vector>
+#include <utility>
+#include <algorithm>
+
+namespace {
+    const float friction_constant = 0.0015f;
+    const float maxspd  = 0.4f;
+    const float maxdspd = maxspd * Q_rsqrt(2);
+}
 
 Entity::Entity() {
     _limit_speed = true;
@@ -7,63 +17,19 @@ Entity::Entity() {
     _flip  = SDL_FLIP_NONE;
     _recovertime = 250;
     _htime = 0;
-    _accns = 0.002f;
-    _maxspd = 0.4f;
-    _maxdspd = _maxspd * Q_rsqrt(2);
     _sprite.InitBuffer(uint32_t(EntityState::_count));
 }
 
-void Entity::MoveUp() {
-    _accn.y -= _accns;
-}
-
-void Entity::MoveLeft() {
-    _accn.x -= _accns;
-}
-
-void Entity::MoveDown() {
-    _accn.y += _accns;
-}
-
-void Entity::MoveRight() {
-    _accn.x += _accns;
-}
-
-void Entity::AddForce(Vec2f op) {
+void Entity::AddForce(Vec2f force) {
     _limit_speed = false;
-    _accn += op;
+    _accn += force / _mass;
 }
 
-void Entity::TakeDamage(float damage) {
-    _hp -= damage;
-    _state = EntityState::Hurt;
-    if (_hp <= 0) {
-        _alive = false;
-    }
-}
-
-void Entity::Die() {
-
-}
-
-void Entity::FaceTowards(Vec2f pos) {
-    _flip = (pos.x < _box.pos.x + _box.dim.x / 2.0) ? SDL_FLIP_HORIZONTAL : SDL_FLIP_NONE;
-}
-
-void Entity::Draw(Graphics *g, Vec2f offset) {
-    SDL_FRect tmp = {
-        _box.pos.x - offset.x,
-        _box.pos.y - offset.y,
-        _box.dim.x, _box.dim.y
-    };
-    _sprite.Draw(g, uint32_t(_state), tmp, _flip, true);
-}
-
-void Entity::Move(float deltatime) {
+void Entity::Accelerate(float deltatime) {
     _vel += _accn * deltatime;
     _accn.zero();
 
-    float friction = 0.0015f * deltatime;
+    float friction = friction_constant * deltatime;
     if (_vel.x != 0) {
         int sx = _vel.x < 0 ? -1 : 1;
         _vel.x -= friction > sx * _vel.x ? _vel.x : sx * friction;
@@ -75,20 +41,48 @@ void Entity::Move(float deltatime) {
 
     if (_limit_speed) {
         if (!_vel.y && _vel.x) {
-            _vel.x = ut_clamp(_vel.x, -_maxspd, _maxspd);
+            _vel.x = ut_clamp(_vel.x, -maxspd, maxspd);
         } else if (!_vel.x && _vel.y) {
-            _vel.y = ut_clamp(_vel.y, -_maxspd, _maxspd);
+            _vel.y = ut_clamp(_vel.y, -maxspd, maxspd);
         } else if (_vel.x && _vel.y) {
-            _vel.x = ut_clamp(_vel.x, -_maxdspd, _maxdspd);
-            _vel.y = ut_clamp(_vel.y, -_maxdspd, _maxdspd);
+            _vel.x = ut_clamp(_vel.x, -maxdspd, maxdspd);
+            _vel.y = ut_clamp(_vel.y, -maxdspd, maxdspd);
         }
-    } else {
+    } else
         _limit_speed = true;
-    }
-
-    _box.pos += _vel * deltatime;
 }
 
-Vec2f Entity::GetCenter() {
-    return _box.pos + _box.dim / 2;
+bool sort_func_ptr(const std::pair<int, float>& a, const std::pair<int, float>& b) {
+	return a.second < b.second;
+}
+
+//TODO get this sorted
+void Entity::CollideAgainstMap(Map &map, float deltatime) {
+	Vec2f cp, cn;
+	float t;
+
+    Rectf wall_rect[4] = {
+        {0, 0, float(map.dim.x * map.drawsize), float(map.drawsize)},
+        {0, 0, float(map.drawsize), float(map.dim.y * map.drawsize)},
+        {0, float((map.dim.y - 1) * map.drawsize), float(map.dim.x * map.drawsize), float(map.drawsize)},
+        {float((map.dim.x - 1) * map.drawsize), 0, float(map.drawsize), float(map.dim.y * map.drawsize)},
+    };
+
+    float steps = _vel.magnitude() * deltatime / map.drawsize + 1;
+    float st = deltatime / steps;
+    while (steps > 0) {
+        std::vector<std::pair<int, float>> z;
+        for (int i = 0; i < 4; i++)
+            if (Collision::DynamicRectVsRect(&_box, _vel, &wall_rect[i], cp, cn, t, st))
+                z.push_back({i, t});
+
+        std::sort(z.begin(), z.end(), sort_func_ptr);
+
+        for (int i = 0; i < z.size(); i++)
+            if (Collision::DynamicRectVsRect(&_box, _vel, &wall_rect[z[i].first], cp, cn, t, st))
+                _vel += cn * Vec2f(ut_abs(_vel.x), ut_abs(_vel.y)) * (1 - t);
+
+        _box.pos += _vel * st;
+        steps --;
+    }
 }

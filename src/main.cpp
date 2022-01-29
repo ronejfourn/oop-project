@@ -112,7 +112,7 @@ int main(int argc, char *argv[]) {
             player.Collision(nullptr, map, graphicsInstance->GetDeltaTime());
             cam.Update();
             mouse = cam.GetCursorPosition();
-            player.FaceTowards(mouse);
+            player.Seek(mouse);
             offset = cam.GetOffset();
         }
 
