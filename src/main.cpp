@@ -3,6 +3,8 @@
 #include "headers/weapon.h"
 #include "headers/ui.h"
 #include "headers/camera.h"
+#include "headers/melee_enemy.h"
+#include <vector>
 #include <SDL2/SDL.h>
 
 SDL_Texture *singleTexture;
@@ -76,9 +78,23 @@ int main(int argc, char *argv[]) {
     map.indices = new int [map.dim.x * map.dim.y];
     for (int x = 0; x < map.dim.x; x ++)
         for (int y = 0; y < map.dim.y; y ++)
-            map.indices[x * map.dim.y + y] = (x == 0 || x == map.dim.x - 1 || y == 0 || y == map.dim.y - 1 ? -1 : 1) * ((rand() % 34) + 1);
+            map.indices[x * map.dim.y + y] = ((rand() & 7) + 1);
+
+    for (int x = 0; x < map.dim.x; x ++) {
+        map.indices[x * map.dim.y] = -12;
+        map.indices[x * map.dim.y + map.dim.y - 1] = -14;
+    }
+
+    for (int y = 0; y < map.dim.y; y++) {
+        map.indices[y] = -17;
+        map.indices[(map.dim.x - 1) * map.dim.y + y] = -18;
+    }
 
     Vec2f offset;
+    std::vector<Enemy *> enemies;
+    enemies.push_back(new MeleeEnemy(M_EnemyType::MaskedOrc));
+    enemies.push_back(new MeleeEnemy(M_EnemyType::OrcWarrior));
+    enemies.push_back(new MeleeEnemy(M_EnemyType::Ogre));
 
     bool restart = false;
     Input *inputInstance = Input::GetInstance();
@@ -112,7 +128,11 @@ int main(int argc, char *argv[]) {
         GameState currentState = uiInstance->GetCurrentState();
         if(currentState == GameState::ALIVE){
             player.Update(graphicsInstance->GetDeltaTime());
-            player.Collision(nullptr, map, graphicsInstance->GetDeltaTime());
+            for (int i = 0; i < enemies.size(); i++)
+                enemies[i]->Update(player, graphicsInstance->GetDeltaTime());
+            player.Collision(enemies, map, graphicsInstance->GetDeltaTime());
+            for (int i = 0; i < enemies.size(); i++)
+                enemies[i]->Collision(player, map, graphicsInstance->GetDeltaTime());
             cam.Update();
             mouse = cam.GetCursorPosition();
             player.Seek(mouse);
@@ -125,9 +145,8 @@ int main(int argc, char *argv[]) {
         }
 
         graphicsInstance->Clear();
-        if(currentState == GameState::ALIVE || currentState == GameState::PAUSE) {
-            cam.Render(player, map);
-        }
+        if(currentState == GameState::ALIVE || currentState == GameState::PAUSE)
+            cam.Render(player, map, enemies);
         uiInstance->Draw(graphicsInstance, player);
 
         graphicsInstance->Update();

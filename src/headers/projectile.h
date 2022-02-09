@@ -11,7 +11,6 @@ class Range : public Weapon {
     SDL_Rect _projectilesrc;
     std::vector<Projectile> _projectiles;
 public:
-    Range();
     Range(Entity * holder, float rad, Weapons name);
     void Attack() override;
     void Update(float deltatime) override;

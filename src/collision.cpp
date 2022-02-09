@@ -9,8 +9,8 @@ bool Collision::CircleVsRect(Rectf rect, Vec2f center, float radius) {
     };
     if (circleDiff.x  > rect.dim.x / 2 + radius) return false;
     if (circleDiff.y  > rect.dim.y / 2 + radius) return false;
-    if (circleDiff.x <= rect.dim.x / 2 + radius) return true ;
-    if (circleDiff.y <= rect.dim.y / 2 + radius) return true ;
+    if (circleDiff.x <= rect.dim.x / 2 + radius && circleDiff.y <= rect.dim.y / 2) return true ;
+    if (circleDiff.y <= rect.dim.y / 2 + radius && circleDiff.x <= rect.dim.x / 2) return true ;
 
     float corner = (circleDiff.x - rect.dim.x / 2) * (circleDiff.x - rect.dim.x / 2) +
                    (circleDiff.y - rect.dim.y / 2) * (circleDiff.y - rect.dim.y / 2);
@@ -19,8 +19,8 @@ bool Collision::CircleVsRect(Rectf rect, Vec2f center, float radius) {
 
 bool Collision::RayVsRect(Rectf rect, Vec2f origin, Vec2f dir, float length) {
     if (!CircleVsRect(rect, origin, length) && length != 0) return false;
-	Vec2f t_near = (rect.pos - origin) / dir;
-	Vec2f t_far  = (rect.pos + rect.dim - origin) / dir;
+	Vec2f t_near = (rect.pos - origin) / (dir * length);
+	Vec2f t_far  = (rect.pos + rect.dim - origin) / (dir * length);
 
 	if(std::isnan(t_near.y) || std::isnan(t_near.x)) return false;
 	if(std::isnan(t_far.y ) || std::isnan(t_far.x )) return false;
@@ -79,7 +79,7 @@ bool Collision::DynamicRectVsRect(const Rectf* rect1, const Vec2f& vel, const Re
     expanded_rect.pos = rect2->pos - rect1->dim / 2;
     expanded_rect.dim = rect2->dim + rect1->dim;
 
-	return (RayVsRect(rect1->pos  + rect1->dim / 2, vel * dt, &expanded_rect, contact_point, contact_normal, contact_time) && contact_time >= 0 && contact_time <= 1.0f);
+	return (RayVsRect(rect1->pos  + rect1->dim / 2, vel * dt, &expanded_rect, contact_point, contact_normal, contact_time) && contact_time >= -1.0f && contact_time <= 1.0f);
 
 }
 

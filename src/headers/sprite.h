@@ -7,6 +7,7 @@ class Sprite {
 protected:
     SDL_Texture *_texture;
     SDL_Rect *_src;
+    Vec2i *_off;
 public:
     Sprite();
     Sprite(SDL_Texture *texture);

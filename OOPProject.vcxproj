@@ -177,6 +177,7 @@
     <ClInclude Include="src\headers\graphics.h" />
     <ClInclude Include="src\headers\input.h" />
     <ClInclude Include="src\headers\melee.h" />
+    <ClInclude Include="src\headers\melee_enemy.h" />
     <ClInclude Include="src\headers\player.h" />
     <ClInclude Include="src\headers\projectile.h" />
     <ClInclude Include="src\headers\sprite.h" />
@@ -193,6 +194,7 @@
     <ClCompile Include="src\input.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\melee.cpp" />
+    <ClCompile Include="src\melee_enemy.cpp" />
     <ClCompile Include="src\player.cpp" />
     <ClCompile Include="src\projectile.cpp" />
     <ClCompile Include="src\sprite.cpp" />

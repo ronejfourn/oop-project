@@ -17,8 +17,8 @@ protected:
     AnimatedSprite _sprite;
 
     bool _alive, _limit_speed;
-    float _hp, _mass, _recovertime, _htime;
-    Vec2f _vel, _accn;
+    float _hp, _mass;
+    Vec2f _vel, _accn, _htime;
 
     void CollideAgainstMap(Map &map, float deltatime);
     void Accelerate(float deltatime);
@@ -30,7 +30,6 @@ public:
     float GetHp() {return _hp;}
     Rectf GetBox() {return _box;}
 
-    virtual void Update(float deltatime) = 0;
     virtual void Die() = 0;
     virtual void Seek(Vec2f pos) = 0;
     virtual void TakeDamage(float damage) = 0;

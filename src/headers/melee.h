@@ -11,11 +11,13 @@ class Melee : public Weapon {
     float _range, _vel;
     float _htime, _atime;
 public:
-    Melee();
     Melee(Entity * holder, float rad, Weapons name);
+	bool IsAttacking() {return _state &Attacking;}
+    float GetRange() {return _range;}
     void Attack() override;
     void Draw(Graphics *g, Vec2f offset) override;
     void Update(float deltatime) override;
     void PointTowards(Vec2f target) override;
     bool Collision(Entity *op) override;
+	void EndAttack() override;
 };

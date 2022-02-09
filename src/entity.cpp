@@ -2,21 +2,22 @@
 #include "headers/collision.h"
 #include <vector>
 #include <utility>
+#include <cmath>
 #include <algorithm>
 
 namespace {
     const float friction_constant = 0.0015f;
-    const float maxspd  = 0.4f;
+    const float maxspd  = 0.2f;
     const float maxdspd = maxspd * Q_rsqrt(2);
 }
 
 Entity::Entity() {
     _limit_speed = true;
-    _hp = 0.0f;
     _alive = true;
     _flip  = SDL_FLIP_NONE;
-    _recovertime = 250;
-    _htime = 0;
+    _state = EntityState::Idle;
+    _accn = {0, 0};
+    _vel  = {0, 0};
     _sprite.InitBuffer(uint32_t(EntityState::_count));
 }
 
@@ -68,21 +69,41 @@ void Entity::CollideAgainstMap(Map &map, float deltatime) {
         {float((map.dim.x - 1) * map.drawsize), 0, float(map.drawsize), float(map.dim.y * map.drawsize)},
     };
 
-    float steps = _vel.magnitude() * deltatime / map.drawsize + 1;
-    float st = deltatime / steps;
-    while (steps > 0) {
-        std::vector<std::pair<int, float>> z;
-        for (int i = 0; i < 4; i++)
-            if (Collision::DynamicRectVsRect(&_box, _vel, &wall_rect[i], cp, cn, t, st))
-                z.push_back({i, t});
+    float steps = (ut_abs(_vel.x) + ut_abs(_vel.y)) * deltatime / map.drawsize;
+	if (steps > 1) {
+		float st    = deltatime / steps;
+		while (steps > 0) {
+			std::vector<std::pair<int, float>> z;
+			for (int i = 0; i < 4; i++) {
+				bool col = Collision::DynamicRectVsRect(&_box, _vel, &wall_rect[i], cp, cn, t, st);
+				if (col)
+					z.push_back({i, t});
+			}
 
-        std::sort(z.begin(), z.end(), sort_func_ptr);
+			std::sort(z.begin(), z.end(), sort_func_ptr);
 
-        for (int i = 0; i < z.size(); i++)
-            if (Collision::DynamicRectVsRect(&_box, _vel, &wall_rect[z[i].first], cp, cn, t, st))
-                _vel += cn * Vec2f(ut_abs(_vel.x), ut_abs(_vel.y)) * (1 - t);
+			for (int i = 0; i < z.size(); i++)
+				if (Collision::DynamicRectVsRect(&_box, _vel, &wall_rect[z[i].first], cp, cn, t, st))
+					_vel += cn * Vec2f(ut_abs(_vel.x), ut_abs(_vel.y)) * (1 - t);
 
-        _box.pos += _vel * st;
-        steps --;
-    }
+			_box.pos += _vel * st;
+			steps --;
+		}
+	} else {
+		std::vector<std::pair<int, float>> z;
+		for (int i = 0; i < 4; i++) {
+			bool col = Collision::DynamicRectVsRect(&_box, _vel, &wall_rect[i], cp, cn, t, deltatime);
+			if (col)
+				z.push_back({i, t});
+		}
+
+		std::sort(z.begin(), z.end(), sort_func_ptr);
+
+		for (int i = 0; i < z.size(); i++)
+			if (Collision::DynamicRectVsRect(&_box, _vel, &wall_rect[z[i].first], cp, cn, t, deltatime))
+				_vel += cn * Vec2f(ut_abs(_vel.x), ut_abs(_vel.y)) * (1 - t);
+
+		_box.pos += _vel * deltatime;
+		steps --;
+	}
 }

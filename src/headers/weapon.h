@@ -31,7 +31,6 @@ protected:
     SDL_RendererFlip _flip;
     void Switch(Weapons newweap);
 public:
-    Weapon();
     Weapon(Entity * holder, float rad, Weapons name);
     virtual ~Weapon () = default;
     virtual void Attack() = 0;
@@ -39,6 +38,7 @@ public:
     virtual void Update(float deltatime) = 0;
     virtual void PointTowards(Vec2f target) = 0;
     virtual void Draw(Graphics *g, Vec2f offset) = 0;
+	virtual void EndAttack() = 0;
     Rectf GetBox() {return _box;}
     void UpdatePosition();
 };

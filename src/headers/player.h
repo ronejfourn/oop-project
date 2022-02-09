@@ -1,7 +1,9 @@
 #pragma once
 #include "entity.h"
+#include <vector>
 
 class Weapon;
+class Enemy;
 
 class Player : public Entity {
     Weapon *_weapon;
@@ -15,12 +17,12 @@ public:
     void MoveDown ();
     void MoveRight();
 
-    void Update(float deltatime) override;
+    void Update(float deltatime);
     void Draw(Graphics *g, Vec2f offset) override;
     void TakeDamage(float damage) override;
     void Seek(Vec2f pos) override;
     void Die() override;
 
     void Attack();
-    void Collision(Entity *enemies, Map &map, float deltatime);
+    void Collision(std::vector<Enemy *> enemies, Map &map, float deltatime);
 };

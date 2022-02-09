@@ -3,19 +3,11 @@
 
 extern SDL_Texture *singleTexture;
 
-//TODO: put proper values for power(damage and knockback) and aspd(atime)
-
-Weapon::Weapon() {
+Weapon::Weapon(Entity * holder, float rad, Weapons name) {
     _sprite.SetTexture(singleTexture);
-    _anchor = nullptr;
-    _radius = 0;
+    _sprite.InitBuffer(1);
     _angle = 0;
     _flip = SDL_FLIP_NONE;
-    _sprite.InitBuffer(1);
-    Switch(Weapons::knife);
-}
-
-Weapon::Weapon(Entity * holder, float rad, Weapons name) : Weapon() {
     _anchor = holder;
     _radius = rad;
     Switch(name);

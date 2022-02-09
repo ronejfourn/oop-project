@@ -2,6 +2,7 @@
 #include "headers/player.h"
 #include "headers/camera.h"
 #include "headers/utils.h"
+#include "headers/enemy.h"
 
 Camera::Camera() {
     _anchor = nullptr;
@@ -42,7 +43,7 @@ void Camera::Update() {
     _offset = _anchor->GetCenter() - _center;
 }
 
-void Camera::Render(Player &player, Map &map) {
+void Camera::Render(Player &player, Map &map, std::vector<Enemy *> enemies) {
     Vec2f ppos  = player.GetCenter();
     Vec2i tl = {
         (int(ppos.x) - _drawArea.dim.x / 2) / map.drawsize,
@@ -68,5 +69,8 @@ void Camera::Render(Player &player, Map &map) {
             _ginstance->DrawTexture(map.texture, src, dst);
         }
     }
+    size_t ecount = enemies.size();
+    for (size_t i = 0; i < ecount; i ++)
+        enemies[i]->Draw(_ginstance, _offset);
     player.Draw(_ginstance, _offset);
 }

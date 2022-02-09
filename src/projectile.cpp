@@ -8,8 +8,6 @@ const float ct  = cos(2 * pi / 3);
 const float st  = sin(2 * pi / 3);
 const float pvel = 1.0f;
 
-Range::Range() : Weapon() {}
-
 Range::Range(Entity * holder, float rad, Weapons name)
 	: Weapon(holder, rad, name) {
         if(name == Weapons::bow) {

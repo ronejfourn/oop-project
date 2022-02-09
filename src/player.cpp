@@ -1,6 +1,7 @@
 #include "headers/player.h"
 #include "headers/melee.h"
 #include "headers/projectile.h"
+#include "headers/enemy.h"
 #include <vector>
 #include <algorithm>
 
@@ -19,6 +20,7 @@ Player::Player() : Entity() {
     _state   = EntityState::Idle;
     _box.dim = {p_width, p_height};
     _hp = 100;
+    _htime = {300, 0};
     _sprite.SetTexture(singleTexture);
     _sprite.AddAnimation(uint32_t(EntityState::Idle), 128, 106, s_width, s_height, 4);
     _sprite.AddAnimation(uint32_t(EntityState::Run ), 192, 106, s_width, s_height, 4);
@@ -76,9 +78,9 @@ void Player::Update(float deltatime) {
     _weapon->Update(deltatime);
 
     if (_state == EntityState::Hurt) {
-        _htime += deltatime;
-        if (_htime > _recovertime) {
-            _htime = 0;
+        _htime.y += deltatime;
+        if (_htime.y >= _htime.x) {
+            _htime.y = 0;
             _state = EntityState::Idle;
         }
     } else if (_vel.x || _vel.y) {
@@ -115,7 +117,14 @@ void Player::Attack() {
     _weapon->Attack();
 }
 
-void Player::Collision(Entity *enemies, Map &map, float deltatime) {
+void Player::Collision(std::vector<Enemy *> enemies, Map &map, float deltatime) {
     CollideAgainstMap(map, deltatime);
-    _weapon->UpdatePosition();
+    size_t ecount = enemies.size();
+    for (size_t i = 0; i < ecount; i++) {
+        _weapon->UpdatePosition();
+        if (_weapon->Collision(enemies[i])) {
+            enemies[i]->TakeDamage(20);
+            enemies[i]->AddForce((enemies[i]->GetCenter() - GetCenter()).normalized() * 2 / 5);
+        }
+    }
 }

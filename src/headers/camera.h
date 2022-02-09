@@ -1,8 +1,10 @@
 #pragma once
 #include "utils.h"
+#include <vector>
 class Graphics;
 class Entity;
 class Player;
+class Enemy;
 
 class Camera {
 private:
@@ -22,5 +24,5 @@ public:
     void SetAnchor(Entity *anchor);
 
     void Update();
-    void Render(Player &player, Map &map);
+    void Render(Player &player, Map &map, std::vector<Enemy *> enemies);
 };

@@ -12,16 +12,6 @@ namespace {
     const float omega    = 4.0f / 3.0f * pi / atktime;
 };
 
-Melee::Melee()
-	: Weapon() {
-        _state = 0;
-        float sqr = (_radius * _radius + _box.dim.y * _box.dim.y / 4) - (_radius * _box.dim.y * cos(5.0f / 6 * pi));
-        _range = Q_rsqrt(sqr) * sqr;
-        _htime = 0;
-        _atime = 0;
-        _vel = 0;
-    }
-
 Melee::Melee(Entity * holder, float rad, Weapons name)
 	: Weapon(holder, rad, name) {
         _state = 0;
@@ -124,4 +114,9 @@ void Melee::Draw(Graphics *g, Vec2f offset) {
 bool Melee::Collision (Entity *entity) {
     if (!(_state & Attacking)) return false;
     return Collision::RayVsRect(entity->GetBox(), _anchor->GetCenter(), _dir, _range);
+}
+
+void Melee::EndAttack() {
+	_atime = 0;
+	_state &= ~Attacking;
 }
