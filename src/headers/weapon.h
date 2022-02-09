@@ -33,6 +33,7 @@ protected:
 public:
     Weapon();
     Weapon(Entity * holder, float rad, Weapons name);
+    virtual ~Weapon () = default;
     virtual void Attack() = 0;
     virtual bool Collision(Entity *) = 0;
     virtual void Update(float deltatime) = 0;

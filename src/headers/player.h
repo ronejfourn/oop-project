@@ -8,6 +8,7 @@ class Player : public Entity {
 public:
     Player();
     Player(float center_x, float center_y);
+    void Restart(float center_x, float center_y);
 
     void MoveUp   ();
     void MoveLeft ();

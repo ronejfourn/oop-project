@@ -3,7 +3,7 @@
 #include "player.h"
 #include <string>
 
-enum class GameState {MENU, OPTIONS, ALIVE, DEAD};
+enum class GameState {MENU, OPTIONS, PAUSE, ALIVE, DEAD};
 
 const int defaultSize = 18;
 const int defaultWidth = 14;
@@ -15,6 +15,8 @@ private:
     uint8_t _selectedOptionIndex;
     SDL_Texture *_fontTexture;
     GameState _currentState;
+    Vec2i _charCoords[95];
+    Vec2i _charDim;
     UI();
 public:
     static UI *GetInstance();
@@ -24,13 +26,14 @@ public:
     void LoadFont(Graphics *g);
     GameState GetCurrentState();
 
+    void Pause();
     void ChangeOption(bool up);
-    void ChooseOption();
+    void ChooseOption(bool *restart);
 
-    SDL_Rect GetCharCoord(const char ch);
     void DisplayText(Graphics *g, std::string msg, SDL_Rect dst, uint16_t ftSize = defaultSize);
     void DisplayInfo(Graphics *g, Player &p);
     void DrawMenu(Graphics *g);
     void DrawOptions(Graphics *g);
+    void DrawPauseMenu(Graphics *g);
     void Draw(Graphics *g, Player &p);
 };

@@ -30,6 +30,13 @@ Player::Player(float center_x, float center_y) : Player() {
     _box.dim = { p_width, p_height };
 }
 
+void Player::Restart(float center_x, float center_y) {
+    delete _weapon;
+    *this = Player(100, 700); 
+    _weapon = new Melee(this, 25, Weapons::regular_sword);
+
+}
+
 void Player::TakeDamage(float damage) {
     if (_state != EntityState::Hurt) {
         _hp -= damage;

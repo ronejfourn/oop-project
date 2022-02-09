@@ -80,6 +80,7 @@ int main(int argc, char *argv[]) {
 
     Vec2f offset;
 
+    bool restart = false;
     Input *inputInstance = Input::GetInstance();
     inputInstance->BindActionToKey(SDL_SCANCODE_W, std::bind(&Player::MoveUp   , &player), true);
     inputInstance->BindActionToKey(SDL_SCANCODE_A, std::bind(&Player::MoveLeft , &player), true);
@@ -88,7 +89,8 @@ int main(int argc, char *argv[]) {
     inputInstance->BindActionToBtn(MouseButton::Left, std::bind(&Player::Attack, &player), false);
     inputInstance->BindActionToKey(SDL_SCANCODE_DOWN, std::bind(&UI::ChangeOption, uiInstance, false), false);
     inputInstance->BindActionToKey(SDL_SCANCODE_UP  , std::bind(&UI::ChangeOption, uiInstance, true ), false);
-    inputInstance->BindActionToKey(SDL_SCANCODE_RETURN, std::bind(&UI::ChooseOption, uiInstance), false);
+    inputInstance->BindActionToKey(SDL_SCANCODE_RETURN, std::bind(&UI::ChooseOption, uiInstance, &restart), false);
+    inputInstance->BindActionToKey(SDL_SCANCODE_ESCAPE, std::bind(&UI::Pause, uiInstance), false);
 
     Camera cam(&player, {0, 0, 1280, 720});
 
@@ -107,7 +109,8 @@ int main(int argc, char *argv[]) {
         }
         inputInstance->Handle();
 
-        if(uiInstance->GetCurrentState() == GameState::ALIVE){
+        GameState currentState = uiInstance->GetCurrentState();
+        if(currentState == GameState::ALIVE){
             player.Update(graphicsInstance->GetDeltaTime());
             player.Collision(nullptr, map, graphicsInstance->GetDeltaTime());
             cam.Update();
@@ -116,8 +119,13 @@ int main(int argc, char *argv[]) {
             offset = cam.GetOffset();
         }
 
+        if(restart){
+            player.Restart(100, 700);
+            restart = false;
+        }
+
         graphicsInstance->Clear();
-        if(uiInstance->GetCurrentState() == GameState::ALIVE) {
+        if(currentState == GameState::ALIVE || currentState == GameState::PAUSE) {
             cam.Render(player, map);
         }
         uiInstance->Draw(graphicsInstance, player);

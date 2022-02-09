@@ -7,6 +7,7 @@ UI *UI::_instance = nullptr;
 
 std::string menuItems[] = {"Play", "Options", "Exit"};
 std::string optionsItems[] = {"Back", "Something"};
+std::string pauseMenuItems[] = {"Resume", "Restart", "Menu", "Save"};
 
 UI::UI(){
     _currentState = GameState::MENU;
@@ -21,6 +22,12 @@ UI::~UI(){}
 
 void UI::LoadFont(Graphics *g) {
     _fontTexture = g->LoadImage("../../res/font.png");
+    
+    _charDim = {14, 18};
+    for(int i = 0; i < 95; ++i) {
+        _charCoords[i].x = (i % _charDim.y) * _charDim.x;
+        _charCoords[i].y = (i / _charDim.y) * _charDim.y;
+    }
 }
 
 GameState UI::GetCurrentState(){
@@ -29,10 +36,14 @@ GameState UI::GetCurrentState(){
 
 void UI::SetState(GameState state){
     _currentState = state;
-    if(_currentState == GameState::MENU)
-        _selectedOptionIndex = 0;
-    if(_currentState == GameState::OPTIONS)
-        _selectedOptionIndex = 0;
+    _selectedOptionIndex = 0;
+}
+
+void UI::Pause(){
+    if(_currentState == GameState::PAUSE)
+        SetState(GameState::ALIVE);
+    else
+        SetState(GameState::PAUSE);
 }
 
 void UI::ChangeOption(bool up){
@@ -41,13 +52,15 @@ void UI::ChangeOption(bool up){
         max = 2;
     else if(_currentState == GameState::OPTIONS)
         max = 1;
+    else if(_currentState == GameState::PAUSE)
+        max = 3;
     if(up)
         _selectedOptionIndex = _selectedOptionIndex ? _selectedOptionIndex - 1 : max;
     else
         _selectedOptionIndex = (_selectedOptionIndex == max) ? 0 : _selectedOptionIndex + 1;
 }
 
-void UI::ChooseOption(){
+void UI::ChooseOption(bool *restart){
     if(_currentState == GameState::MENU){
         if(_selectedOptionIndex == 0)
             SetState(GameState::ALIVE);
@@ -58,20 +71,22 @@ void UI::ChooseOption(){
             e.type = SDL_QUIT;
             SDL_PushEvent(&e);
         }
-    }
-    else if(_currentState == GameState::OPTIONS){
+    } else if(_currentState == GameState::OPTIONS){
         if(_selectedOptionIndex == 0)
             SetState(GameState::MENU);
+    } else if(_currentState == GameState::PAUSE){
+        if(_selectedOptionIndex == 0)
+            SetState(GameState::ALIVE);
+        else if(_selectedOptionIndex == 1){
+            SetState(GameState::ALIVE);
+            *restart = true;
+        } else if(_selectedOptionIndex == 2){
+            SetState(GameState::MENU);
+            *restart = true;
+        }
     }
 }
 
-SDL_Rect UI::GetCharCoord(const char ch){
-    SDL_Rect tmp = {0, 0, 14, 18};         // dimension of each character 14*18
-    tmp.x = ((ch - 32) % 18) * tmp.w;
-    tmp.y = ((ch - 32) / 18) * tmp.h;
-
-    return tmp;
-}
 
 void UI::DisplayText(Graphics *g, std::string msg, SDL_Rect dst, uint16_t ftSize){
     const char *msgStr = msg.c_str();
@@ -97,7 +112,7 @@ void UI::DisplayText(Graphics *g, std::string msg, SDL_Rect dst, uint16_t ftSize
             if((txtSize - i) * chrDst.w < dst.w)
                 chrDst.x += (dst.w - ((txtSize - i) * chrDst.w)) / 2;
         }
-        SDL_Rect src = GetCharCoord(msgStr[i]);
+        SDL_Rect src = {_charCoords[msgStr[i] - 32].x, _charCoords[msgStr[i] - 32].y, _charDim.x, _charDim.y};
         g->DrawTexture(_fontTexture, src, chrDst);
         chrDst.x += chrDst.w;
     }
@@ -144,6 +159,21 @@ void UI::DrawOptions(Graphics *g){
     }
 }
 
+void UI::DrawPauseMenu(Graphics *g){
+    Vec2i windowSize = g->GetLogicalResolution();
+    SDL_Rect container = {0, 0, windowSize.x / 4, windowSize.y / 4};
+    container.x = (windowSize.x - container.w) / 2;
+    container.y = (windowSize.y - container.h) / 2;
+    g->FillRect(container, 25, 25, 25, 200);
+    
+    container.h /= 4;
+    uint16_t ftSize = 28;
+    for(const auto &i : pauseMenuItems){
+        DisplayText(g, i, container, i == pauseMenuItems[_selectedOptionIndex] ? 35 : ftSize);
+        container.y += container.h;
+    }
+}
+
 void UI::Draw(Graphics *g, Player &p){
     if(_currentState == GameState::ALIVE)
         DisplayInfo(g, p);
@@ -151,4 +181,6 @@ void UI::Draw(Graphics *g, Player &p){
         DrawMenu(g);
     else if(_currentState == GameState::OPTIONS)
         DrawOptions(g);
+    else if(_currentState == GameState::PAUSE)
+        DrawPauseMenu(g);
 }
