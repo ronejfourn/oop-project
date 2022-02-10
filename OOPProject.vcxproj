@@ -140,8 +140,7 @@
       <Command>cmd.exe /c $(SolutionDir)copy_dll.bat</Command>
     </PostBuildEvent>
     <PreBuildEvent>
-      <Command>
-      </Command>
+      <Command>cmd.exe /c $(SolutionDir)get_deps.bat</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -166,8 +165,7 @@
       <Command>cmd.exe /c $(SolutionDir)copy_dll.bat</Command>
     </PostBuildEvent>
     <PreBuildEvent>
-      <Command>
-      </Command>
+      <Command>cmd.exe /c $(SolutionDir)get_deps.bat</Command>
     </PreBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
