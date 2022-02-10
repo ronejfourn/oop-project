@@ -1,16 +1,11 @@
-# OOP Project
+# ~~OOP Project~~
 
 
-# TODO
-- [x] Input Handling
-- [ ] Collision Detection
-- [ ] UI
-- [ ] Game States (menu, pause etc)
-- [ ] Enemies
-- [ ] Weapons and Attack
-- [ ] Map Generation
-
-## MaybeDO
-- [ ] ECS
-- [ ] Loot
-- [ ] Interactibles
+# ~~TODO~~
+- [x] ~~Input Handling~~
+- [x] ~~Collision Detection~~
+- [x] ~~UI~~
+- [x] ~~Game States (menu, pause etc)~~
+- [ ] ~~Enemies~~
+- [x] ~~Weapons and Attack~~
+- [ ] ~~Map Generation~~
