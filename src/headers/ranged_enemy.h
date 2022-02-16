@@ -22,5 +22,5 @@ public:
     void Seek(Vec2f pos) override;
     void TakeDamage(float damage) override;
     void Draw(Graphics *g, Vec2f offset) override;
-    void Update(Player &player, Map &map, float deltatime) override;
+    void Update(Player &player, float deltatime) override;
 };

@@ -17,4 +17,5 @@ public:
     void PointTowards(Vec2f target) override;
     void Draw(Graphics *g, Vec2f offset) override;
     bool Collision (Entity *) override {return false;}
+	void EndAttack() override {};
 };

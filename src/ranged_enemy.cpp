@@ -53,6 +53,6 @@ void RangedEnemy::Draw(Graphics *g, Vec2f offset) {
 
 }
 
-void RangedEnemy::Update(Player &player, Map &map, float deltatime) {
+void RangedEnemy::Update(Player &player, float deltatime) {
 
 }
